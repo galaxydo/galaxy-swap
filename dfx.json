@@ -107,10 +107,10 @@
       "type": "assets",
       "workspace": "swap_frontend"
     },
-    "icrc1_ledger_canister": {
+    "b23token": {
       "type": "custom",
-      "candid": "https://raw.githubusercontent.com/dfinity/ic/d87954601e4b22972899e9957e800406a0a6b929/rs/rosetta-api/icrc1/ledger/ledger.did",
-      "wasm": "https://download.dfinity.systems/ic/d87954601e4b22972899e9957e800406a0a6b929/canisters/ic-icrc1-ledger.wasm.gz"
+      "candid": "./icrc1_ledger.did",
+      "wasm": "./icrc1_ledger.wasm.gz"
     }
   },
   "defaults": {
