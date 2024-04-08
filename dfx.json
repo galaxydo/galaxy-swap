@@ -1,0 +1,26 @@
+{
+  "canisters": {
+    "swap_backend": {
+      "main": "src/swap_backend/main.mo",
+      "type": "motoko"
+    },
+    "swap_frontend": {
+      "dependencies": [
+        "swap_backend"
+      ],
+      "source": [
+        "src/swap_frontend/dist"
+      ],
+      "type": "assets",
+      "workspace": "swap_frontend"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}
