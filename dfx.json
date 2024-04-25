@@ -1,5 +1,10 @@
 {
   "canisters": {
+    "b23token": {
+      "candid": "./icrc1_ledger.did",
+      "type": "custom",
+      "wasm": "./icrc1_ledger.wasm.gz"
+    },
     "nns-cycles-minting": {
       "build": "",
       "candid": "candid/nns-cycles-minting.did",
@@ -96,8 +101,8 @@
       "type": "custom",
       "wasm": ""
     },
-
     "swap_backend": {
+      "dependencies": ["b23token"],
       "main": "src/swap_backend/main.mo",
       "type": "motoko"
     },
@@ -106,17 +111,12 @@
       "source": ["src/swap_frontend/dist"],
       "type": "assets",
       "workspace": "swap_frontend"
-    },
-    "b23token": {
-      "type": "custom",
-      "candid": "./icrc1_ledger.did",
-      "wasm": "./icrc1_ledger.wasm.gz"
     }
   },
   "defaults": {
     "build": {
       "args": "",
-      "packtool": ""
+      "packtool": "mops sources"
     }
   },
   "output_env_file": ".env",

@@ -2,12 +2,12 @@
 
 // Amount of tokens, measured in 10^-8 of a token.
 type Tokens = record {
-     e8s : nat64;
+    e8s : nat64;
 };
 
 // Number of nanoseconds from the UNIX epoch in UTC timezone.
 type TimeStamp = record {
-    timestamp_nanos: nat64;
+    timestamp_nanos : nat64;
 };
 
 // AccountIdentifier is a 32-byte array.
@@ -24,7 +24,7 @@ type BlockIndex = nat64;
 
 type Transaction = record {
     memo : Memo;
-    icrc1_memo: opt blob;
+    icrc1_memo : opt blob;
     operation : opt Operation;
     created_at_time : TimeStamp;
 };
@@ -37,40 +37,40 @@ type Memo = nat64;
 type TransferArgs = record {
     // Transaction memo.
     // See comments for the `Memo` type.
-    memo: Memo;
+    memo : Memo;
     // The amount that the caller wants to transfer to the destination address.
-    amount: Tokens;
+    amount : Tokens;
     // The amount that the caller pays for the transaction.
     // Must be 10000 e8s.
-    fee: Tokens;
+    fee : Tokens;
     // The subaccount from which the caller wants to transfer funds.
     // If null, the ledger uses the default (all zeros) subaccount to compute the source address.
     // See comments for the `SubAccount` type.
-    from_subaccount: opt SubAccount;
+    from_subaccount : opt SubAccount;
     // The destination account.
     // If the transfer is successful, the balance of this address increases by `amount`.
-    to: AccountIdentifier;
+    to : AccountIdentifier;
     // The point in time when the caller created this request.
     // If null, the ledger uses current IC time as the timestamp.
-    created_at_time: opt TimeStamp;
+    created_at_time : opt TimeStamp;
 };
 
 type TransferError = variant {
     // The fee that the caller specified in the transfer request was not the one that ledger expects.
     // The caller can change the transfer fee to the `expected_fee` and retry the request.
-    BadFee : record { expected_fee : Tokens; };
+    BadFee : record { expected_fee : Tokens };
     // The account specified by the caller doesn't have enough funds.
-    InsufficientFunds : record { balance: Tokens; };
+    InsufficientFunds : record { balance : Tokens };
     // The request is too old.
     // The ledger only accepts requests created within 24 hours window.
     // This is a non-recoverable error.
-    TxTooOld : record { allowed_window_nanos: nat64 };
+    TxTooOld : record { allowed_window_nanos : nat64 };
     // The caller specified `created_at_time` that is too far in future.
     // The caller can retry the request later.
     TxCreatedInFuture : null;
     // The ledger has already executed the request.
     // `duplicate_of` field is equal to the index of the block containing the original transaction.
-    TxDuplicate : record { duplicate_of: BlockIndex; }
+    TxDuplicate : record { duplicate_of : BlockIndex };
 };
 
 type TransferResult = variant {
@@ -80,14 +80,14 @@ type TransferResult = variant {
 
 // Arguments for the `account_balance` call.
 type AccountBalanceArgs = record {
-    account: AccountIdentifier;
+    account : AccountIdentifier;
 };
 
 type TransferFeeArg = record {};
 
 type TransferFee = record {
     // The fee to pay to perform a transfer
-    transfer_fee: Tokens;
+    transfer_fee : Tokens;
 };
 
 type GetBlocksArgs = record {
@@ -119,14 +119,12 @@ type Operation = variant {
         spender : AccountIdentifier;
         // This field is deprecated and should not be used.
         allowance_e8s : int;
-        allowance: Tokens;
+        allowance : Tokens;
         fee : Tokens;
         expires_at : opt TimeStamp;
         expected_allowance : opt Tokens;
     };
 };
-
- 
 
 type Block = record {
     parent_hash : opt blob;
@@ -176,7 +174,7 @@ type QueryArchiveResult = variant {
 };
 
 // A function that is used for fetching archived ledger blocks.
-type QueryArchiveFn = func (GetBlocksArgs) -> (QueryArchiveResult) query;
+type QueryArchiveFn = func(GetBlocksArgs) -> (QueryArchiveResult) query;
 
 // The result of a "query_blocks" call.
 //
@@ -184,7 +182,7 @@ type QueryArchiveFn = func (GetBlocksArgs) -> (QueryArchiveResult) query;
 // not have all the blocks that the caller requested: One or more "archive" canisters might
 // store some of the requested blocks.
 //
-// Note: as of Q4 2021 when this interface is authored, the IC doesn't support making nested 
+// Note: as of Q4 2021 when this interface is authored, the IC doesn't support making nested
 // query calls within a query call.
 type QueryBlocksResponse = record {
     // The total number of blocks in the chain.
@@ -230,9 +228,9 @@ type ArchivedBlocksRange = record {
 };
 
 type ArchivedEncodedBlocksRange = record {
-    callback : func (GetBlocksArgs) -> (
-        variant { Ok : vec blob; Err : QueryArchiveError },
-        ) query;
+    callback : func(GetBlocksArgs) -> (
+        variant { Ok : vec blob; Err : QueryArchiveError }
+    ) query;
     start : nat64;
     length : nat64;
 };
@@ -246,16 +244,16 @@ type QueryEncodedBlocksResponse = record {
 };
 
 type Archive = record {
-    canister_id: principal;
+    canister_id : principal;
 };
 
 type Archives = record {
-    archives: vec Archive;
+    archives : vec Archive;
 };
 
 type Duration = record {
-    secs: nat64;
-    nanos: nat32;
+    secs : nat64;
+    nanos : nat32;
 };
 
 type ArchiveOptions = record {
@@ -264,7 +262,7 @@ type ArchiveOptions = record {
     node_max_memory_size_bytes : opt nat64;
     max_message_size_bytes : opt nat64;
     controller_id : principal;
-    more_controller_ids: opt vec principal;
+    more_controller_ids : opt vec principal;
     cycles_for_archive_creation : opt nat64;
     max_transactions_per_response : opt nat64;
 };
@@ -274,16 +272,16 @@ type TextAccountIdentifier = text;
 
 // Arguments for the `send_dfx` call.
 type SendArgs = record {
-    memo: Memo;
-    amount: Tokens;
-    fee: Tokens;
-    from_subaccount: opt SubAccount;
-    to: TextAccountIdentifier;
-    created_at_time: opt TimeStamp;
+    memo : Memo;
+    amount : Tokens;
+    fee : Tokens;
+    from_subaccount : opt SubAccount;
+    to : TextAccountIdentifier;
+    created_at_time : opt TimeStamp;
 };
 
 type AccountBalanceArgsDfx = record {
-    account: TextAccountIdentifier;
+    account : TextAccountIdentifier;
 };
 
 type FeatureFlags = record {
@@ -291,19 +289,19 @@ type FeatureFlags = record {
 };
 
 type InitArgs = record {
-    minting_account: TextAccountIdentifier;
-    icrc1_minting_account: opt Account;
-    initial_values: vec record {TextAccountIdentifier; Tokens};
-    max_message_size_bytes: opt nat64;
-    transaction_window: opt Duration;
-    archive_options: opt ArchiveOptions;
-    send_whitelist: vec principal;
-    transfer_fee: opt Tokens;
-    token_symbol: opt text;
-    token_name: opt text;
+    minting_account : TextAccountIdentifier;
+    icrc1_minting_account : opt Account;
+    initial_values : vec record { TextAccountIdentifier; Tokens };
+    max_message_size_bytes : opt nat64;
+    transaction_window : opt Duration;
+    archive_options : opt ArchiveOptions;
+    send_whitelist : vec principal;
+    transfer_fee : opt Tokens;
+    token_symbol : opt text;
+    token_name : opt text;
     feature_flags : opt FeatureFlags;
     maximum_number_of_accounts : opt nat64;
-    accounts_overflow_trim_quantity: opt nat64;
+    accounts_overflow_trim_quantity : opt nat64;
 };
 
 type Icrc1BlockIndex = nat;
@@ -322,7 +320,7 @@ type TransferArg = record {
     amount : Icrc1Tokens;
     fee : opt Icrc1Tokens;
     memo : opt blob;
-    created_at_time: opt Icrc1Timestamp;
+    created_at_time : opt Icrc1Timestamp;
 };
 
 type Icrc1TransferError = variant {
@@ -350,14 +348,14 @@ type Value = variant {
 };
 
 type UpgradeArgs = record {
-  maximum_number_of_accounts : opt nat64;
-  icrc1_minting_account : opt Account;
-  feature_flags : opt FeatureFlags;
+    maximum_number_of_accounts : opt nat64;
+    icrc1_minting_account : opt Account;
+    feature_flags : opt FeatureFlags;
 };
 
 type LedgerCanisterPayload = variant {
-    Init: InitArgs;
-    Upgrade: opt UpgradeArgs;
+    Init : InitArgs;
+    Upgrade : opt UpgradeArgs;
 };
 
 type ApproveArgs = record {
@@ -368,7 +366,7 @@ type ApproveArgs = record {
     expires_at : opt Icrc1Timestamp;
     fee : opt Icrc1Tokens;
     memo : opt blob;
-    created_at_time: opt Icrc1Timestamp;
+    created_at_time : opt Icrc1Timestamp;
 };
 
 type ApproveError = variant {
@@ -405,7 +403,7 @@ type TransferFromArgs = record {
     amount : Icrc1Tokens;
     fee : opt Icrc1Tokens;
     memo : opt blob;
-    created_at_time: opt Icrc1Timestamp;
+    created_at_time : opt Icrc1Timestamp;
 };
 
 type TransferFromResult = variant {
@@ -425,7 +423,7 @@ type TransferFromError = variant {
     GenericError : record { error_code : nat; message : text };
 };
 
-service: (LedgerCanisterPayload) -> {
+service : (LedgerCanisterPayload) -> {
     // Transfers tokens from a subaccount of the caller to the destination address.
     // The source address is computed from the principal of the caller and the specified subaccount.
     // When successful, returns the index of the block containing the transaction.
@@ -445,15 +443,15 @@ service: (LedgerCanisterPayload) -> {
 
     // Queries encoded blocks in the specified range
     query_encoded_blocks : (GetBlocksArgs) -> (QueryEncodedBlocksResponse) query;
-    
+
     // Returns token symbol.
-    symbol : () -> (record { symbol: text }) query;
+    symbol : () -> (record { symbol : text }) query;
 
     // Returns token name.
-    name : () -> (record { name: text }) query;
+    name : () -> (record { name : text }) query;
 
     // Returns token decimals.
-    decimals : () -> (record { decimals: nat32 }) query;
+    decimals : () -> (record { decimals : nat32 }) query;
 
     // Returns the existing archive canisters information.
     archives : () -> (Archives) query;
@@ -476,4 +474,4 @@ service: (LedgerCanisterPayload) -> {
     icrc2_approve : (ApproveArgs) -> (ApproveResult);
     icrc2_allowance : (AllowanceArgs) -> (Allowance) query;
     icrc2_transfer_from : (TransferFromArgs) -> (TransferFromResult);
-}
+};
