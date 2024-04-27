@@ -6,6 +6,7 @@ import { nns_ledger, idlFactory as nnsLedgerIdlFactory, canisterId as nnsLedgerC
 import { Button } from './components/ui/button';
 import { Card } from './components/ui/card';
 import { useToast } from "./components/ui/use-toast";
+import NumberInput from './components/ui/NumberInput';
 
 function App() {
   const NNS_LEDGER_CANISTER_ID = nnsLedgerCanisterId;
@@ -13,7 +14,8 @@ function App() {
   const TOKEN_CANISTER_ID = b23CanisterId;
   const [isConnected, setIsConnected] = useState(false);
   const { toast } = useToast();
-
+  const [spendAmount, setSpendAmount] = useState(10);
+  
   async function checkThatPlugIsConnected() {
     try {
       const isConnected = await window.ic.plug.isConnected();
@@ -33,21 +35,6 @@ function App() {
     return window.ic && window.ic.plug;
   };
 
-  // function connectPlug() {
-  //   (async () => {
-  //     try {
-  //       const publicKey = await window.ic.plug.requestConnect({
-  //         whitelist: [NNS_LEDGER_CANISTER_ID, BACKEND_CANISTER_ID],
-  //       });
-  //       console.log(`The connected user's public key is:`, publicKey);
-  //       setIsConnected(true)
-  //     } catch (e) {
-  //       alert("error connecting plug wallet");
-  //       console.log(e);
-  //       setIsConnected(false)
-  //     }
-  //   })();
-  // }
   const connectPlugWallet = async () => {
     if (isPlugWalletAvailable()) {
       try {
@@ -81,17 +68,10 @@ function App() {
   };
   
   async function disconnectPlug() {
-    try {
-      if (window.ic && window.ic.plug) {
+      if (isPlugWalletAvailable()) {
+        // await window.ic.plug.disconnect();
         setIsConnected(false);
-        console.log("Disconnected successfully");
-      } else {
-        console.error("Plug Wallet SDK is not available.");
       }
-    } catch (e) {
-      console.error("Error disconnecting the plug wallet", e);
-      alert("Error disconnecting plug wallet. Please try again.");
-    }
   }
 
   async function importToken() {
@@ -102,6 +82,10 @@ function App() {
       'logo': 'https://cryptologos.cc/logos/aptos-apt-logo.png',
     })
   }
+
+  const handleSpendAmountChange = (newAmount) => {
+    setSpendAmount(newAmount);
+  };
 
   async function approveSpend() {
     const actor = await window.ic.plug.createActor({
@@ -114,7 +98,7 @@ function App() {
       memo: [],
       from_subaccount: [],
       created_at_time: [],
-      amount: 1_000_000 + 10_000,
+      amount: spendAmount,
       expected_allowance: [],
       expires_at: [],
       spender: {
@@ -138,16 +122,39 @@ function App() {
     console.log({ result })
   }
 
-
   return (
     <main>
       {isConnected ? (
-        <Card>
-          <Button onClick={disconnectPlug} variant="default">Disconnect Plug</Button>
-          <Button onClick={approveSpend} variant="default">Approve Spend</Button>
-          <Button onClick={performSwap} variant="default">Perform Swap 0.01 ICP</Button>
-          <Button onClick={importToken} variant="default">Import Token</Button>
-        </Card>
+        // <Card>
+        //   <Button onClick={disconnectPlug} variant="default">Disconnect Plug</Button>
+        //   <Button onClick={approveSpend} variant="default">Approve Spend</Button>
+        //   <Button onClick={performSwap} variant="default">Perform Swap 0.01 ICP</Button>
+        //   <Button onClick={importToken} variant="default">Import Token</Button>
+        // </Card>
+        <div className="flex items-center justify-center min-h-screen">
+          <Card className="max-w-sm w-full bg-white shadow-lg rounded-lg p-8">
+            <h1 className="text-xl font-semibold text-gray-700 text-center">Bridge23 Early Investors</h1>
+            <p className="text-gray-600 mt-4 text-center">
+              We need to approve ICP spend to charge your plug wallet.
+            </p>
+            <NumberInput
+              initial={spendAmount}
+              min={1}
+              max={250}
+              onChange={handleSpendAmountChange}
+            />  
+              <p className="text-gray-600 mt-4 text-center">
+                Max buy 250 ICP
+              </p>          
+            <Button onClick={approveSpend} 
+                className="text-white bg-blue-500 hover:bg-blue-600 w-full py-2 rounded"
+                disabled={spendAmount < 1 || spendAmount > 250}
+            >
+              Approve Spend
+            </Button>
+          </Card>
+        </div>
+        
       ) : (
         <div className="flex items-center justify-center min-h-screen">
           <Card className="max-w-sm w-full bg-white shadow-lg rounded-lg p-8">
