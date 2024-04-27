@@ -2,7 +2,8 @@ import { memo, useEffect, useState } from 'react';
 import { Principal } from "@dfinity/principal";
 import { swap_backend } from 'declarations/swap_backend';
 import { nns_ledger, idlFactory as nnsLedgerIdlFactory } from 'declarations/nns-ledger';
-import { Button, Card } from 'components/ui';
+import { Button } from './components/ui/button';
+import { Card } from './components/ui/card';
 
 function App() {
   const NNS_LEDGER_CANISTER_ID = "ryjl3-tyaaa-aaaaa-aaaba-cai";
