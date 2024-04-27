@@ -1,3 +1,4 @@
+import path from 'path';
 import { fileURLToPath, URL } from "url";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
@@ -9,6 +10,9 @@ dotenv.config({ path: "../../.env" });
 export default defineConfig({
   build: {
     emptyOutDir: true,
+    rollupOptions: {
+      external: ['components/ui']
+    }
   },
   optimizeDeps: {
     esbuildOptions: {
@@ -36,6 +40,15 @@ export default defineConfig({
         find: "declarations",
         replacement: fileURLToPath(new URL("../declarations", import.meta.url)),
       },
+      {
+        find: "components/ui",
+        replacement: fileURLToPath(new URL("../components/ui", import.meta.url)),
+      },
+      // Note this line where path is used. The 'path' module must be imported at the top.
+      {
+        find: '@',
+        replacement: path.resolve(__dirname, './src')
+      }
     ],
   },
 });
