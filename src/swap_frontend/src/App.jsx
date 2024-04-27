@@ -3,6 +3,8 @@ import { Principal } from "@dfinity/principal";
 import { canisterId as b23CanisterId } from '../../declarations/b23token';
 import { swap_backend, idlFactory as swapBackendIdlFactory, canisterId as swapBackendCanisterId } from 'declarations/swap_backend';
 import { nns_ledger, idlFactory as nnsLedgerIdlFactory, canisterId as nnsLedgerCanisterId } from 'declarations/nns-ledger';
+import { Button } from './components/ui/button';
+import { Card } from './components/ui/card';
 
 function App() {
   const NNS_LEDGER_CANISTER_ID = nnsLedgerCanisterId;
@@ -19,7 +21,7 @@ function App() {
       } else {
         setIsConnected(false);
       }
-    } catch(e) {
+    } catch (e) {
       console.error("Error checking if plug is connected", e);
     }
   }
@@ -75,7 +77,7 @@ function App() {
       }
     });
 
-    console.log({result})
+    console.log({ result })
   }
 
   async function performSwap() {
@@ -86,7 +88,7 @@ function App() {
 
     const result = await actor.swapIcpToToken(1_000_000);
 
-    console.log({result})
+    console.log({ result })
   }
 
 
@@ -96,14 +98,14 @@ function App() {
       <br />
       <br />
       {isConnected ? (
-        <div>
-          <button onClick={disconnectPlug}>Disconnect Plug</button>
-          <button onClick={approveSpend}>Approve Spend 0.01</button>
+        <Card>
+          <Button onClick={disconnectPlug} variant="danger">Disconnect Plug</Button>
+          <Button onClick={approveSpend} variant="success">Approve Spend</Button>
           <button onClick={performSwap}>Perform Swap 0.01 ICP</button>
-          <button onClick={importToken}>Import Token</button>
-        </div>
+          <Button onClick={importToken} variant="info">Import Token</Button>
+        </Card>
       ) : (
-        <button onClick={connectPlug}>Connect Plug</button>
+        <Button onClick={connectPlug} variant="primary">Connect Plug</Button>
       )}
     </main>
   );
