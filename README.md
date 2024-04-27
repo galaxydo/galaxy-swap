@@ -26,6 +26,19 @@ gives you this:
 }
 ```
 
+Alternative if you can't check, you need to follow this step 
+
+1. Open your terminal and navigate to the dfx configuration directory `cd /root/.config/dfx`
+2. Use a text editor to create or modify the networks.json file `nano networks.json`
+3. Copy and paste the following content into the networks.json file 
+4. Save and exit the editor. In nano, you can do this by pressing CTRL+X, then press Y to confirm saving, and finally press Enter
+5. Make sure there are no contradictory network settings in your project’s dfx.json, navigate to `cd /root/swap`
+6. Open the dfx.json file in a text editor `nano dfx.json`
+7. Ensure no networks configurations conflict or redefine the local network setup there. If found, modify or remove them
+
+
+
+Running dfx processes
 1. Run `dfx start --clean` in the first terminal. leave it running there so that you see the logs
 2. In a separate terminal run `dfx nns install` and wait for it to finish
 
