@@ -1,12 +1,13 @@
 import { memo, useEffect, useState } from 'react';
 import { Principal } from "@dfinity/principal";
-import { swap_backend } from 'declarations/swap_backend';
-import { nns_ledger, idlFactory as nnsLedgerIdlFactory } from 'declarations/nns-ledger';
+import { canisterId as b23CanisterId } from '../../declarations/b23token';
+import { swap_backend, idlFactory as swapBackendIdlFactory, canisterId as swapBackendCanisterId } from 'declarations/swap_backend';
+import { nns_ledger, idlFactory as nnsLedgerIdlFactory, canisterId as nnsLedgerCanisterId } from 'declarations/nns-ledger';
 
 function App() {
-  const NNS_LEDGER_CANISTER_ID = "ryjl3-tyaaa-aaaaa-aaaba-cai";
-  const BACKEND_CANISTER_ID = "bd3sg-teaaa-aaaaa-qaaba-cai"
-  const TOKEN_CANISTER_ID = "bkyz2-fmaaa-aaaaa-qaaaq-cai"
+  const NNS_LEDGER_CANISTER_ID = nnsLedgerCanisterId;
+  const BACKEND_CANISTER_ID = swapBackendCanisterId;
+  const TOKEN_CANISTER_ID = b23CanisterId;
   const [isConnected, setIsConnected] = useState(false);
 
   async function checkThatPlugIsConnected() {
@@ -48,7 +49,7 @@ function App() {
     window.ic.plug.requestImportToken({
       'canisterId': TOKEN_CANISTER_ID,
       'symbol': 'WBR23',
-      'standard': 'ICRC-2',
+      'standard': 'ICRC-1',
       'logo': 'https://cryptologos.cc/logos/aptos-apt-logo.png',
     })
   }
@@ -64,17 +65,30 @@ function App() {
       memo: [],
       from_subaccount: [],
       created_at_time: [],
-      amount: 100_0000_0000,
+      amount: 1_000_000 + 10_000,
       expected_allowance: [],
       expires_at: [],
       spender: {
         owner: Principal.fromText(BACKEND_CANISTER_ID),
+        // owner: BACKEND_CANISTER_ID,
         subaccount: [],
       }
     });
 
     console.log({result})
   }
+
+  async function performSwap() {
+    const actor = await window.ic.plug.createActor({
+      canisterId: BACKEND_CANISTER_ID,
+      interfaceFactory: swapBackendIdlFactory,
+    })
+
+    const result = await actor.swapIcpToToken(1_000_000);
+
+    console.log({result})
+  }
+
 
   return (
     <main>
@@ -84,7 +98,8 @@ function App() {
       {isConnected ? (
         <div>
           <button onClick={disconnectPlug}>Disconnect Plug</button>
-          <button onClick={approveSpend}>Approve Spend</button>
+          <button onClick={approveSpend}>Approve Spend 0.01</button>
+          <button onClick={performSwap}>Perform Swap 0.01 ICP</button>
           <button onClick={importToken}>Import Token</button>
         </div>
       ) : (

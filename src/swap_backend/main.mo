@@ -17,10 +17,11 @@ shared ({ caller = initializer }) actor class () = self {
   * Storage
   */
   private stable var _owner : Principal = initializer;
-  private stable var _icpReceived : Nat64 = 0;
-  private stable var _tokenSold : Nat64 = 0;
-  private stable var _exchangeRate : Nat64 = 200;
+  private stable var _icpReceived : Nat = 0;
+  private stable var _tokenSold : Nat = 0;
+  private stable var _exchangeRate : Nat = 200;
   private stable var _exchangeEnabled : Bool = false;
+  private stable var _MAX_SALE_ICP : Nat = 250_0000_0000;
 
   /**
   * Types
@@ -51,12 +52,19 @@ shared ({ caller = initializer }) actor class () = self {
   /**
   * Swap functions
   */
-  public shared ({ caller }) func swapIcpToToken(icp_amount_e8s : Nat64) : async () {
+  public shared ({ caller }) func swapIcpToToken(icp_amount_e8s : Nat) : async () {
     if (not _exchangeEnabled) {
       throw Error.reject("Exchange is disabled");
     };
 
-    let token_amount : Nat64 = icp_amount_e8s * _exchangeRate;
+    let canister_token_balance = await getTokenBalance();
+    let token_amount = icp_amount_e8s * _exchangeRate;
+
+    if (canister_token_balance < token_amount) {
+      throw Error.reject("Not enough tokens in the canister");
+    };
+
+    let fee : ICPLedger.Icrc1Tokens = 10_000;
 
     let allowance : ICPLedger.Allowance = await ICPLedger.icrc2_allowance({
       account = {
@@ -69,8 +77,59 @@ shared ({ caller = initializer }) actor class () = self {
       };
     });
 
-    if (allowance.allowance <= Nat64.toNat(icp_amount_e8s)) {
-      throw Error.reject("Not enough ICP allowance");
+    if (allowance.allowance <= icp_amount_e8s) {
+      throw Error.reject("Not enough ICP allowance: " # debug_show (allowance));
+    };
+
+    try {
+      let result : ICPLedger.TransferFromResult = await ICPLedger.icrc2_transfer_from({
+        spender_subaccount = null;
+        from = {
+          owner = caller;
+          subaccount = null;
+        };
+        to = {
+          owner = Principal.fromActor(self);
+          subaccount = null;
+        };
+        amount = icp_amount_e8s;
+        fee = ?fee;
+        memo = null;
+        created_at_time = null;
+      });
+
+      switch (result) {
+        case (#Err(error)) {
+          throw Error.reject("Couldn't transfer ICP:\n" # debug_show (error) # "allowance: " # debug_show (allowance));
+        };
+        case (#Ok(_)) {
+          _icpReceived += icp_amount_e8s;
+        };
+      };
+
+      let transferArgs : B23Token.TransferArg = {
+        from_subaccount = null;
+        to = { owner = caller; subaccount = null };
+        amount = token_amount;
+        fee = null;
+        memo = null;
+        created_at_time = null;
+      };
+
+      let transferResult = await B23Token.icrc1_transfer(transferArgs);
+
+      switch (transferResult) {
+        case (#Err(transferError)) {
+          throw Error.reject("Couldn't transfer tokens:\n" # debug_show (transferError));
+        };
+        case (#Ok(_)) {
+          _tokenSold += token_amount;
+        };
+      };
+
+    } catch (error : Error) {
+      // catch any errors that might occur during the transfer
+      throw Error.reject("Reject message: " # Error.message(error));
     };
   };
 
@@ -82,20 +141,38 @@ shared ({ caller = initializer }) actor class () = self {
     return Principal.toLedgerAccount(caller, null);
   };
 
+  public shared func getICPBalance() : async Nat {
+    let result = await ICPLedger.icrc1_balance_of({
+      owner = Principal.fromActor(self);
+      subaccount = null;
+    });
+
+    return result;
+  };
+
+  public shared func getTokenBalance() : async Nat {
+    let result = await B23Token.icrc1_balance_of({
+      owner = Principal.fromActor(self);
+      subaccount = null;
+    });
+
+    return result;
+  };
+
   // Returns default account for the canister
   public query func getCanisterMainAccount() : async Account {
     return Principal.toLedgerAccount(Principal.fromActor(self), null);
   };
 
-  public query func getICPReceived() : async Nat64 {
+  public query func getICPReceived() : async Nat {
     return _icpReceived;
   };
 
-  public query func getTokenSold() : async Nat64 {
+  public query func getTokenSold() : async Nat {
     return _tokenSold;
   };
 
-  public query func getExchangeRate() : async Nat64 {
+  public query func getExchangeRate() : async Nat {
     return _exchangeRate;
   };
 
@@ -117,7 +194,7 @@ shared ({ caller = initializer }) actor class () = self {
     _exchangeEnabled := false;
   };
 
-  public shared ({ caller }) func setExchangeRate(rate : Nat64) : async () {
+  public shared ({ caller }) func setExchangeRate(rate : Nat) : async () {
     await requireOwner(caller);
     _exchangeRate := rate;
   };
