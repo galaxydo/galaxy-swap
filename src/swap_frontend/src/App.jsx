@@ -2,6 +2,7 @@ import { memo, useEffect, useState } from 'react';
 import { Principal } from "@dfinity/principal";
 import { swap_backend } from 'declarations/swap_backend';
 import { nns_ledger, idlFactory as nnsLedgerIdlFactory } from 'declarations/nns-ledger';
+import { Button, Card } from 'components/ui';
 
 function App() {
   const NNS_LEDGER_CANISTER_ID = "ryjl3-tyaaa-aaaaa-aaaba-cai";
@@ -18,7 +19,7 @@ function App() {
       } else {
         setIsConnected(false);
       }
-    } catch(e) {
+    } catch (e) {
       console.error("Error checking if plug is connected", e);
     }
   }
@@ -73,7 +74,7 @@ function App() {
       }
     });
 
-    console.log({result})
+    console.log({ result })
   }
 
   return (
@@ -82,13 +83,18 @@ function App() {
       <br />
       <br />
       {isConnected ? (
-        <div>
-          <button onClick={disconnectPlug}>Disconnect Plug</button>
-          <button onClick={approveSpend}>Approve Spend</button>
-          <button onClick={importToken}>Import Token</button>
-        </div>
+        <Card>
+          <Button onClick={disconnectPlug} variant="danger">Disconnect Plug</Button>
+          <Button onClick={approveSpend} variant="success">Approve Spend</Button>
+          <Button onClick={importToken} variant="info">Import Token</Button>
+        </Card>
+        // <div>
+        //   <button onClick={disconnectPlug}>Disconnect Plug</button>
+        //   <button onClick={approveSpend}>Approve Spend</button>
+        //   <button onClick={importToken}>Import Token</button>
+        // </div>
       ) : (
-        <button onClick={connectPlug}>Connect Plug</button>
+        <Button onClick={connectPlug} variant="primary">Connect Plug</Button>
       )}
     </main>
   );
