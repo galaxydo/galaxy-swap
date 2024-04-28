@@ -231,7 +231,7 @@ function App() {
       <CardHeader className="text-center text-white space-y-10">
         <CardTitle className="">Bridge23 Early Investors</CardTitle>
       </CardHeader>
-      <div className="text-white text-center mx-24 shadow-lg bg-indigo-400 mb-6 rounded-lg py-2">
+      <div className="text-white text-center w-3/4 mx-auto shadow-lg bg-indigo-400 mb-6 rounded-lg py-2">
         {spendAmount} ICP
       </div>
       <Button
