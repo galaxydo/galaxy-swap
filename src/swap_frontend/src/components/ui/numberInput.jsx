@@ -45,37 +45,38 @@ function NumberInput({ initial = 10, min = 1, max = 250, onChange, disabled = fa
       }
     }
   };
+  // className="text-white bg-indigo-500 hover:bg-indigo-600 w-full py-2 rounded"
 
   return (
-    <div className='my-3 px-8'>
-      <div className="flex items-center justify-center space-x-2 border-2 border-gray-800 rounded-full">
-        <button
-          className="bg-gray-800 text-white px-7 py-2 rounded-l-full hover:bg-gray-900"
-          onClick={handleDecrement} disabled={disabled || value <= min}
-        >
-          -
-        </button>
-        <div className="relative flex-grow ">
-          <input
-            type="number"
-            className="w-full text-center px-2 py-1 focus:outline-none rounded"
-            value={value}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            disabled={disabled}
-            style={{ paddingRight: '2rem' }}
-          />
-          <span className="absolute inset-y-0 right-0 px-1 flex items-center text-gray-700">
-            ICP
-          </span>
-        </div>
-        <button
-          className="bg-gray-800 text-white px-7 py-2 rounded-r-full hover:bg-gray-900"
-          onClick={handleIncrement}
-          disabled={disabled || value >= max}
-        >
-          +
-        </button>
+    <div className='px-8 text-lg'>
+      <div className="flex items-center justify-center">
+          <button 
+              className="text-white bg-indigo-500 hover:bg-indigo-600 px-7 py-2 rounded-l-full"
+              onClick={handleDecrement} disabled={disabled || value <= min}
+          >
+              -
+          </button>
+          <div className="relative flex-grow ">
+              <input 
+                  type="number"
+                  className="w-full text-center text-white px-6 py-2 focus:outline-none bg-indigo-500"
+                  value={value} 
+                  onChange={handleChange} 
+                  onBlur={handleBlur} 
+                  disabled={disabled}
+                  style={{ paddingRight: '2rem' }}
+              />
+              <span className="absolute inset-y-0 right-0 px-3 flex text-white items-center">
+              ICP
+              </span>
+          </div>
+          <button 
+              className="text-white bg-indigo-500 hover:bg-indigo-600 px-7 py-2 rounded-r-full"
+              onClick={handleIncrement} 
+              disabled={disabled || value >= max}
+          >
+              +
+          </button>
       </div>
     </div>
   );
