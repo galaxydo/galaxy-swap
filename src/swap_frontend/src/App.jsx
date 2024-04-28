@@ -1,6 +1,6 @@
 import { memo, useEffect, useState } from 'react';
 import { Principal } from "@dfinity/principal";
-import { canisterId as b23CanisterId } from '../../declarations/b23token';
+import { canisterId as b23CanisterId, idlFactory as b23AdlFactory } from '../../declarations/b23token';
 import { swap_backend, idlFactory as swapBackendIdlFactory, canisterId as swapBackendCanisterId } from 'declarations/swap_backend';
 import { nns_ledger, idlFactory as nnsLedgerIdlFactory, canisterId as nnsLedgerCanisterId } from 'declarations/nns-ledger';
 import { Button } from './components/ui/button';
@@ -12,6 +12,7 @@ function App() {
   const NNS_LEDGER_CANISTER_ID = nnsLedgerCanisterId;
   const BACKEND_CANISTER_ID = swapBackendCanisterId;
   const TOKEN_CANISTER_ID = b23CanisterId;
+
   const [isConnected, setIsConnected] = useState(false);
   const { toast } = useToast();
   const [spendAmount, setSpendAmount] = useState(10);
@@ -41,13 +42,13 @@ function App() {
         const publicKey = await window.ic.plug.requestConnect({
           whitelist: [NNS_LEDGER_CANISTER_ID, BACKEND_CANISTER_ID],
         });
+        setIsConnected(true);
         console.log(`The connected user's public key is:`, publicKey);
-        if (publicKey) {
+        if (isConnected) {
           toast({
             title: "Success",
             description: "Your Plug wallet has been successfully connected 🥳",
           });
-          setIsConnected(true);
         }
       } catch (error) {
         console.error("Plug Wallet connection error:", error);
@@ -87,13 +88,80 @@ function App() {
     setSpendAmount(newAmount);
   };
 
+  // async function approveSpend() {
+  //   await window?.ic?.plug?.requestConnect({
+  //     whitelist,
+  //   });
+  //   const actor = await window.ic.plug.createActor({
+  //     canisterId: NNS_LEDGER_CANISTER_ID,
+  //     interfaceFactory: nnsLedgerIdlFactory,
+  //   })
+
+  //   const result = await actor.icrc2_approve({
+  //     fee: [],
+  //     memo: [],
+  //     from_subaccount: [],
+  //     created_at_time: [],
+  //     amount: spendAmount,
+  //     expected_allowance: [],
+  //     expires_at: [],
+  //     spender: {
+  //       owner: Principal.fromText(BACKEND_CANISTER_ID),
+  //       // owner: BACKEND_CANISTER_ID,
+  //       subaccount: [],
+  //     }
+  //   });
+
+  //   console.log({ result })
+  // }
+
+  // async function approveSpend() {
+  //   try {
+  //     const balanceWallet = await window.ic.plug.requestBalance();
+  //     console.log("balanceWallet", balanceWallet);
+    
+  //     await window?.ic?.plug?.requestConnect({ whitelist });
+  //     const actor = await window.ic.plug.createActor({
+  //       canisterId: NNS_LEDGER_CANISTER_ID,
+  //       interfaceFactory: nnsLedgerIdlFactory,
+  //     });
+  
+  //   const result = await actor.icrc2_approve({
+  //     fee: [],
+  //     memo: [],
+  //     from_subaccount: [],
+  //     created_at_time: [],
+  //     amount: spendAmount,
+  //     expected_allowance: [],
+  //     expires_at: [],
+  //     spender: {
+  //       owner: Principal.fromText(BACKEND_CANISTER_ID),
+  //       // owner: BACKEND_CANISTER_ID,
+  //       subaccount: [],
+  //     }
+  //   });
+  
+  //     console.log({ result });
+  //   } catch (error) {
+  //     console.error("Error while trying to approve spend:", error);
+  //   }
+  // }
+
   async function approveSpend() {
+    const whitelist = [NNS_LEDGER_CANISTER_ID];
+
+    await window?.ic?.plug?.requestConnect({
+      whitelist,
+    });
+    
     const actor = await window.ic.plug.createActor({
       canisterId: NNS_LEDGER_CANISTER_ID,
       interfaceFactory: nnsLedgerIdlFactory,
     })
+    console.log("actor", actor);
+    console.log(Principal.fromText(BACKEND_CANISTER_ID))
 
-    const result = await actor.icrc2_approve({
+   const result = await actor.icrc2_approve({
       fee: [],
       memo: [],
       from_subaccount: [],
@@ -107,8 +175,7 @@ function App() {
         subaccount: [],
       }
     });
-
-    console.log({ result })
+    console.log("approvetest", result);
   }
 
   async function performSwap() {
@@ -117,7 +184,7 @@ function App() {
       interfaceFactory: swapBackendIdlFactory,
     })
 
-    const result = await actor.swapIcpToToken(1_000_000);
+    const result = await actor.swwapIcpToToken(1_000_000);
 
     console.log({ result })
   }
