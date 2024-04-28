@@ -17,20 +17,20 @@ function App() {
   const { toast } = useToast();
   const [spendAmount, setSpendAmount] = useState(10);
   
+  useEffect(() => {
+    checkThatPlugIsConnected();
+  }, [])
+
   async function checkThatPlugIsConnected() {
     try {
       const isConnected = await window.ic.plug.isConnected();
-      if (isConnected) {
-        console.log("Plug is connected");
-        setIsConnected(isConnected);
-      } else {
-        setIsConnected(false);
-      }
+      setIsConnected(isConnected);
+      console.log("Plug is connected");
     } catch (e) {
       console.error("Error checking if plug is connected", e);
+      setIsConnected(false);
     }
   }
-  useEffect(() => checkThatPlugIsConnected(), [])
 
   const isPlugWalletAvailable = () => {
     return window.ic && window.ic.plug;
@@ -44,12 +44,10 @@ function App() {
         });
         setIsConnected(true);
         console.log(`The connected user's public key is:`, publicKey);
-        if (isConnected) {
-          toast({
-            title: "Success",
-            description: "Your Plug wallet has been successfully connected 🥳",
-          });
-        }
+        toast({
+          title: "Success",
+          description: "Your Plug wallet has been successfully connected 🥳",
+        });
       } catch (error) {
         console.error("Plug Wallet connection error:", error);
         setIsConnected(false);
@@ -76,128 +74,86 @@ function App() {
   }
 
   async function importToken() {
-    window.ic.plug.requestImportToken({
-      'canisterId': TOKEN_CANISTER_ID,
-      'symbol': 'WBR23',
-      'standard': 'ICRC-1',
-      'logo': 'https://cryptologos.cc/logos/aptos-apt-logo.png',
-    })
+    try {
+      await window.ic.plug.requestImportToken({
+        'canisterId': TOKEN_CANISTER_ID,
+        'symbol': 'WBR23',
+        'standard': 'ICRC-1',
+        'logo': 'https://cryptologos.cc/logos/aptos-apt-logo.png',
+      })
+    } catch (error) {
+      console.error("Failed to import token", error);
+      toast({
+        title: "Error",
+        description: "Failed to import token.",
+      });
+    }
   }
 
   const handleSpendAmountChange = (newAmount) => {
     setSpendAmount(newAmount);
   };
 
-  // async function approveSpend() {
-  //   await window?.ic?.plug?.requestConnect({
-  //     whitelist,
-  //   });
-  //   const actor = await window.ic.plug.createActor({
-  //     canisterId: NNS_LEDGER_CANISTER_ID,
-  //     interfaceFactory: nnsLedgerIdlFactory,
-  //   })
-
-  //   const result = await actor.icrc2_approve({
-  //     fee: [],
-  //     memo: [],
-  //     from_subaccount: [],
-  //     created_at_time: [],
-  //     amount: spendAmount,
-  //     expected_allowance: [],
-  //     expires_at: [],
-  //     spender: {
-  //       owner: Principal.fromText(BACKEND_CANISTER_ID),
-  //       // owner: BACKEND_CANISTER_ID,
-  //       subaccount: [],
-  //     }
-  //   });
-
-  //   console.log({ result })
-  // }
-
-  // async function approveSpend() {
-  //   try {
-  //     const balanceWallet = await window.ic.plug.requestBalance();
-  //     console.log("balanceWallet", balanceWallet);
-    
-  //     await window?.ic?.plug?.requestConnect({ whitelist });
-  //     const actor = await window.ic.plug.createActor({
-  //       canisterId: NNS_LEDGER_CANISTER_ID,
-  //       interfaceFactory: nnsLedgerIdlFactory,
-  //     });
-  
-  //   const result = await actor.icrc2_approve({
-  //     fee: [],
-  //     memo: [],
-  //     from_subaccount: [],
-  //     created_at_time: [],
-  //     amount: spendAmount,
-  //     expected_allowance: [],
-  //     expires_at: [],
-  //     spender: {
-  //       owner: Principal.fromText(BACKEND_CANISTER_ID),
-  //       // owner: BACKEND_CANISTER_ID,
-  //       subaccount: [],
-  //     }
-  //   });
-  
-  //     console.log({ result });
-  //   } catch (error) {
-  //     console.error("Error while trying to approve spend:", error);
-  //   }
-  // }
-
   async function approveSpend() {
-    const whitelist = [NNS_LEDGER_CANISTER_ID];
+    if (!isPlugWalletAvailable()) return;
+    try {
+      const actor = await window.ic.plug.createActor({
+        canisterId: NNS_LEDGER_CANISTER_ID,
+        interfaceFactory: nnsLedgerIdlFactory,
+      });
 
-    await window?.ic?.plug?.requestConnect({
-      whitelist,
-    });
-    
-    const actor = await window.ic.plug.createActor({
-      canisterId: NNS_LEDGER_CANISTER_ID,
-      interfaceFactory: nnsLedgerIdlFactory,
-    })
-    console.log("actor", actor);
-    console.log(Principal.fromText(BACKEND_CANISTER_ID))
-
-   const result = await actor.icrc2_approve({
-      fee: [],
-      memo: [],
-      from_subaccount: [],
-      created_at_time: [],
-      amount: spendAmount,
-      expected_allowance: [],
-      expires_at: [],
-      spender: {
-        owner: Principal.fromText(BACKEND_CANISTER_ID),
-        // owner: BACKEND_CANISTER_ID,
-        subaccount: [],
-      }
-    });
-    console.log("approvetest", result);
+      const result = await actor.icrc2_approve({
+        fee: [],
+        memo: [],
+        from_subaccount: [],
+        created_at_time: [],
+        amount: spendAmount + 10_000,
+        expected_allowance: [],
+        expires_at: [],
+        spender: {
+          owner: Principal.fromText(BACKEND_CANISTER_ID),
+          // owner: BACKEND_CANISTER_ID,
+          subaccount: [],
+        }
+      });
+      console.log("Approve test:", result);
+      toast({
+        title: "Success",
+        description: "Transaction approved successfully.",
+      });
+    } catch (error) {
+      console.error("Error during transaction approval:", error);
+      toast({
+        title: "Transaction Error",
+        description: "Failed to approve the transaction.",
+      });
+    }
   }
 
   async function performSwap() {
-    const actor = await window.ic.plug.createActor({
-      canisterId: BACKEND_CANISTER_ID,
-      interfaceFactory: swapBackendIdlFactory,
-    })
+    if (!isPlugWalletAvailable()) {
+      console.log("Plug Wallet is not available.");
+      return;
+    } 
+    try {
+      const actor = await window.ic.plug.createActor({
+        canisterId: BACKEND_CANISTER_ID,
+        interfaceFactory: swapBackendIdlFactory,
+      });
+      console.log("Actor created successfully, attempting to call swapIcpToToken.", actor);
 
-    const result = await actor.swwapIcpToToken(1_000_000);
-
-    console.log({ result })
+      const exchangeRate = await actor.enableExchange();
+      console.log("Exchange rate:", exchangeRate);
+      const result = await actor.swapIcpToToken(spendAmount);
+      console.log("Approve test:", result);
+    } catch (error) {
+      console.error("Error performing swap:", error);
+    }
   }
 
   return (
     <main>
       {isConnected ? (
-        // <Card>
-        //   <Button onClick={disconnectPlug} variant="default">Disconnect Plug</Button>
-        //   <Button onClick={approveSpend} variant="default">Approve Spend</Button>
-        //   <Button onClick={performSwap} variant="default">Perform Swap 0.01 ICP</Button>
-        //   <Button onClick={importToken} variant="default">Import Token</Button>
-        // </Card>
         <div className="flex items-center justify-center min-h-screen">
           <Card className="max-w-sm w-full bg-white shadow-lg rounded-lg p-8">
             <h1 className="text-xl font-semibold text-gray-700 text-center">Bridge23 Early Investors</h1>
@@ -218,6 +174,12 @@ function App() {
                 disabled={spendAmount < 1 || spendAmount > 250}
             >
               Approve Spend
+            </Button>
+
+            <Button onClick={performSwap} 
+                className="text-white bg-gray-800 hover:bg-gray-900 w-full py-2 rounded"
+            >
+              Perform Swap 0.01 ICP
             </Button>
           </Card>
         </div>
@@ -252,3 +214,14 @@ function App() {
 }
 
 export default App;
+
+
+
+
+
+        // <Card>
+        //   <Button onClick={disconnectPlug} variant="default">Disconnect Plug</Button>
+        //   <Button onClick={approveSpend} variant="default">Approve Spend</Button>
+        //   <Button onClick={performSwap} variant="default">Perform Swap 0.01 ICP</Button>
+        //   <Button onClick={importToken} variant="default">Import Token</Button>
+        // </Card>
