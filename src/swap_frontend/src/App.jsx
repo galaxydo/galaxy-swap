@@ -288,9 +288,7 @@ function App() {
 
 export default App;
 
-// <Card>
 //   <Button onClick={disconnectPlug} variant="default">Disconnect Plug</Button>
 //   <Button onClick={approveSpend} variant="default">Approve Spend</Button>
 //   <Button onClick={performSwap} variant="default">Perform Swap 0.01 ICP</Button>
 //   <Button onClick={importToken} variant="default">Import Token</Button>
-// </Card>

@@ -45,7 +45,6 @@ function NumberInput({ initial = 10, min = 1, max = 250, onChange, disabled = fa
       }
     }
   };
-  // className="text-white bg-indigo-500 hover:bg-indigo-600 w-full py-2 rounded"
 
   return (
     <div className='px-8 text-lg'>
