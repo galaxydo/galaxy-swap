@@ -142,8 +142,6 @@ function App() {
       });
       console.log("Actor created successfully, attempting to call swapIcpToToken.", actor);
 
-      const exchangeRate = await actor.enableExchange();
-      console.log("Exchange rate:", exchangeRate);
       const result = await actor.swapIcpToToken(spendAmount);
       console.log("Approve test:", result);
     } catch (error) {
