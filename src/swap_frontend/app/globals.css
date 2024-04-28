@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: rgb(28 28 28);
     --foreground: 222.2 84% 4.9%;
 
     --card: 0 0% 100%;
@@ -73,5 +73,16 @@
 
   body {
     @apply bg-background text-foreground;
+    background-color: var(--background);
+    color-scheme: light;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
