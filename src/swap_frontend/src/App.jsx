@@ -147,7 +147,7 @@ function App() {
                 Max buy 250 ICP
               </p>          
             <Button onClick={approveSpend} 
-                className="text-white bg-blue-500 hover:bg-blue-600 w-full py-2 rounded"
+                className="text-white bg-gray-800 hover:bg-gray-900 w-full py-2 rounded"
                 disabled={spendAmount < 1 || spendAmount > 250}
             >
               Approve Spend
