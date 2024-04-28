@@ -7,6 +7,7 @@ import { nns_ledger, idlFactory as nnsLedgerIdlFactory, canisterId as nnsLedgerC
 import { Button } from './components/ui/button';
 import { Card } from './components/ui/card';
 import { useToast } from "./components/ui/use-toast";
+import { useNavigate } from 'react-router-dom';
 import NumberInput from './components/ui/numberInput';
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
   const { toast } = useToast();
   const [spendAmount, setSpendAmount] = useState(10);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   async function checkThatPlugIsConnected() {
     try {
@@ -97,6 +99,13 @@ function App() {
     })
 
     try {
+      // const transactionResponse = await actor.icrc2_approve({
+      //   from_subaccount: [], 
+      //   to: Principal.fromText(swapBackendCanisterId),
+      //   amount: { e8s: BigInt(spendAmount * 1e8) }, // Ensure amount is in e8s format
+      // });
+
+      // console.log(transactionResponse);
       const result = await actor.icrc2_approve({
         fee: [],
         memo: [],
@@ -111,8 +120,10 @@ function App() {
         }
       });
       console.log({ result });
+      navigate('/investor');
     } catch (error) {
       console.error("Error approving spend", error);
+      toast({ title: "Approval Failed", description: error.message });
     } finally {
       setLoading(false);
     }
