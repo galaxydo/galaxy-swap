@@ -1,3 +1,4 @@
+// src/swap_frontend/src/App.jsx
 import { memo, useEffect, useState } from 'react';
 import { Principal } from "@dfinity/principal";
 import { canisterId as b23CanisterId } from '../../declarations/b23token';
@@ -6,7 +7,7 @@ import { nns_ledger, idlFactory as nnsLedgerIdlFactory, canisterId as nnsLedgerC
 import { Button } from './components/ui/button';
 import { Card } from './components/ui/card';
 import { useToast } from "./components/ui/use-toast";
-import NumberInput from './components/ui/NumberInput';
+import NumberInput from './components/ui/numberInput';
 
 function App() {
   const NNS_LEDGER_CANISTER_ID = nnsLedgerCanisterId;
@@ -15,7 +16,8 @@ function App() {
   const [isConnected, setIsConnected] = useState(false);
   const { toast } = useToast();
   const [spendAmount, setSpendAmount] = useState(10);
-  
+  const [loading, setLoading] = useState(false);
+
   async function checkThatPlugIsConnected() {
     try {
       const isConnected = await window.ic.plug.isConnected();
@@ -66,12 +68,12 @@ function App() {
       });
     }
   };
-  
+
   async function disconnectPlug() {
-      if (isPlugWalletAvailable()) {
-        // await window.ic.plug.disconnect();
-        setIsConnected(false);
-      }
+    if (isPlugWalletAvailable()) {
+      // await window.ic.plug.disconnect();
+      setIsConnected(false);
+    }
   }
 
   async function importToken() {
@@ -88,27 +90,32 @@ function App() {
   };
 
   async function approveSpend() {
+    setLoading(true);
     const actor = await window.ic.plug.createActor({
       canisterId: NNS_LEDGER_CANISTER_ID,
       interfaceFactory: nnsLedgerIdlFactory,
     })
 
-    const result = await actor.icrc2_approve({
-      fee: [],
-      memo: [],
-      from_subaccount: [],
-      created_at_time: [],
-      amount: spendAmount,
-      expected_allowance: [],
-      expires_at: [],
-      spender: {
-        owner: Principal.fromText(BACKEND_CANISTER_ID),
-        // owner: BACKEND_CANISTER_ID,
-        subaccount: [],
-      }
-    });
-
-    console.log({ result })
+    try {
+      const result = await actor.icrc2_approve({
+        fee: [],
+        memo: [],
+        from_subaccount: [],
+        created_at_time: [],
+        amount: spendAmount,
+        expected_allowance: [],
+        expires_at: [],
+        spender: {
+          owner: Principal.fromText(BACKEND_CANISTER_ID),
+          subaccount: [],
+        }
+      });
+      console.log({ result });
+    } catch (error) {
+      console.error("Error approving spend", error);
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function performSwap() {
@@ -125,12 +132,6 @@ function App() {
   return (
     <main>
       {isConnected ? (
-        // <Card>
-        //   <Button onClick={disconnectPlug} variant="default">Disconnect Plug</Button>
-        //   <Button onClick={approveSpend} variant="default">Approve Spend</Button>
-        //   <Button onClick={performSwap} variant="default">Perform Swap 0.01 ICP</Button>
-        //   <Button onClick={importToken} variant="default">Import Token</Button>
-        // </Card>
         <div className="flex items-center justify-center min-h-screen">
           <Card className="max-w-sm w-full bg-white shadow-lg rounded-lg p-8">
             <h1 className="text-xl font-semibold text-gray-700 text-center">Bridge23 Early Investors</h1>
@@ -142,19 +143,20 @@ function App() {
               min={1}
               max={250}
               onChange={handleSpendAmountChange}
-            />  
-              <p className="text-gray-600 mt-4 text-center">
-                Max buy 250 ICP
-              </p>          
-            <Button onClick={approveSpend} 
-                className="text-white bg-blue-500 hover:bg-blue-600 w-full py-2 rounded"
-                disabled={spendAmount < 1 || spendAmount > 250}
+              disabled={loading}
+            />
+            <p className="text-gray-600 mt-4 text-center">
+              Max buy 250 ICP
+            </p>
+            <Button onClick={approveSpend}
+              className="text-white bg-blue-500 hover:bg-blue-600 w-full py-2 rounded"
+              disabled={spendAmount < 1 || spendAmount > 250 || loading}
             >
-              Approve Spend
+              {loading ? <div className="loader"></div> : 'Approve Spend'}
             </Button>
           </Card>
         </div>
-        
+
       ) : (
         <div className="flex items-center justify-center min-h-screen">
           <Card className="max-w-sm w-full bg-white shadow-lg rounded-lg p-8">
@@ -163,8 +165,8 @@ function App() {
               Dear friend, It's an honor for us to see you as one of the early investors.
             </p>
             <p className="text-gray-500 text-sm mt-1 text-center">
-              Your investment is the seed that grows tomorrow's innovations. 
-              Thank you for being the early champions of change with Bridge23.       
+              Your investment is the seed that grows tomorrow's innovations.
+              Thank you for being the early champions of change with Bridge23.
             </p>
             <div className="mt-8">
               <Button
@@ -179,7 +181,7 @@ function App() {
             </p>
           </Card>
         </div>
-    )}
+      )}
     </main>
   );
 }
