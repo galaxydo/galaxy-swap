@@ -1,4 +1,5 @@
 import { memo, useEffect, useState } from "react";
+import { Actor, HttpAgent } from "@dfinity/agent";
 import { Principal } from "@dfinity/principal";
 import {
   canisterId as b23CanisterId,
@@ -25,6 +26,7 @@ import {
 import { useToast } from "./components/ui/use-toast";
 import NumberInput from "./components/ui/NumberInput";
 import Spinner from "./components/ui/spinner";
+import DisconnectPlugWalletButton from "./components/ui/disconnectPlugWalletButton";
 
 function App() {
   const NNS_LEDGER_CANISTER_ID = nnsLedgerCanisterId;
@@ -38,10 +40,24 @@ function App() {
   const [approved, setApproved] = useState(false);
   const [copySuccess, setCopySuccess] = useState("");
   const [onSwapScreen, setOnSwapScreen] = useState(false);
+  const [swapCompleted, setSwapCompleted] = useState(false);
+  const [exchangeRate, setExchangeRate] = useState("");
 
   useEffect(() => {
     checkThatPlugIsConnected();
+    fetchExchangeRate();
   }, []);
+
+  const agent = new HttpAgent();
+  const exchangeRateactor = Actor.createActor(swapBackendIdlFactory, {
+    agent,
+    canisterId: swapBackendCanisterId,
+  });
+  async function fetchExchangeRate() {
+    const rate = await exchangeRateactor.getExchangeRate();
+    console.log(rate);
+    setExchangeRate(rate);
+  }
 
   async function checkThatPlugIsConnected() {
     try {
@@ -108,13 +124,14 @@ function App() {
         canisterId: NNS_LEDGER_CANISTER_ID,
         interfaceFactory: nnsLedgerIdlFactory,
       });
+      console.log("spendAmount:", spendAmount * 1e8 + 10_000);
 
       const result = await actor.icrc2_approve({
         fee: [],
         memo: [],
         from_subaccount: [],
         created_at_time: [],
-        amount: spendAmount + 10_000,
+        amount: spendAmount * 1e8 + 10_000,
         expected_allowance: [],
         expires_at: [],
         spender: {
@@ -152,8 +169,9 @@ function App() {
         "Actor created successfully, attempting to call swapIcpToToken.",
         actor
       );
-      const result = await actor.swapIcpToToken(spendAmount);
+      const result = await actor.swapIcpToToken(spendAmount * 1e8);
       console.log("Swap token:", result);
+      setSwapCompleted(true);
     } catch (error) {
       console.error("Error performing swap:", error);
     }
@@ -212,7 +230,7 @@ function App() {
       </CardHeader>
       <NumberInput
         initial={spendAmount}
-        min={1}
+        min={10}
         max={250}
         onChange={handleSpendAmountChange}
       />
@@ -223,7 +241,7 @@ function App() {
         <Button
           onClick={approveSpend}
           className="text-white text-lg bg-indigo-500 hover:bg-indigo-600 w-full py-2 rounded shadow-lg"
-          disabled={spendAmount < 1 || spendAmount > 250 || loading}
+          disabled={spendAmount < 10 || spendAmount > 250 || loading}
         >
           {loading && <Spinner />}
           {loading && <span className="mr-2"></span>}
@@ -235,12 +253,10 @@ function App() {
 
   const swapTokentPage = (
     <>
-      <CardHeader className="text-center text-white space-y-10">
-        {!loading && (
-          <button onClick={handleGoBack} className="text-sm text-white mt-4">
-            &lt;- Go Back
-          </button>
-        )}
+      <CardHeader className="relative text-center text-white">
+        <div className="absolute right-0 top-0 mr-2 text-sm text-white">
+          {!loading && <button onClick={handleGoBack}>&lt;- Go Back</button>}
+        </div>
         <CardTitle className="">Bridge23 Early Investors</CardTitle>
       </CardHeader>
       <div className="text-white text-center w-3/4 mx-auto shadow-lg bg-indigo-400 mb-6 rounded-lg py-2">
@@ -283,12 +299,52 @@ function App() {
     </>
   );
 
+  const gratitudePage = (
+    <>
+      <CardHeader className="relative text-center text-white">
+        <CardTitle className="">Thank you 🫡</CardTitle>
+        <CardTitle className="">Dear Investors!</CardTitle>
+      </CardHeader>
+      <CardDescription className="text-white text-lg">
+        On behalf of the entire Bridge23 team, we extend our deepest gratitude
+        for your early support in acquiring our tokens. Your confidence and
+        commitment in our product are invaluable to us. Your investment not only
+        fuels our progress but also strengthens our resolve to deliver a product
+        that we all can be proud of. We look forward to achieving great things
+        together.
+        <br />
+        <br />
+        Warm regards
+        <br />
+        <br />
+        The Bridge23 Team{" "}
+        <img
+          src="../public/favicon.png"
+          alt="Bridge23 Logo"
+          className="w-8 inline"
+        />
+      </CardDescription>
+    </>
+  );
+
   return (
     <main>
+      <div className="text-white text-center">
+        {loading ? (
+          <p>Loading...</p>
+        ) : (
+          <p className="text-white">Current Exchange Rate: {exchangeRate}</p>
+        )}
+      </div>
+      {isConnected ? (
+        <DisconnectPlugWalletButton setIsConnected={setIsConnected} />
+      ) : null}
       <div className="flex items-center justify-center min-h-screen">
         <Card className="max-w-sm w-full bg-indigo-900 shadow-2xl shadow-indigo-600/50 rounded-lg p-4 border-none">
           {isConnected
-            ? approved
+            ? swapCompleted
+              ? gratitudePage
+              : approved
               ? swapTokentPage
               : approveSpendPage
             : connectPlugWalletPage}

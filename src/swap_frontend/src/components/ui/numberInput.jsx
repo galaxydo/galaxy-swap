@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import './NumberInput.css';
 
-function NumberInput({ initial = 10, min = 1, max = 250, onChange, disabled = false }) {
+function NumberInput({ initial = 10, min = 10, max = 250, onChange, disabled = false }) {
   const [value, setValue] = useState(initial);
 
   const handleIncrement = () => {
