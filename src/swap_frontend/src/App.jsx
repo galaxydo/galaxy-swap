@@ -25,6 +25,7 @@ import {
 import { useToast } from "./components/ui/use-toast";
 import NumberInput from "./components/ui/numberInput";
 import Spinner from "./components/ui/spinner";
+import { ArrowLeft } from "lucide-react";
 
 function App() {
   const NNS_LEDGER_CANISTER_ID = nnsLedgerCanisterId;
@@ -235,11 +236,14 @@ function App() {
 
   const swapTokentPage = (
     <>
-      <CardHeader className="text-center text-white space-y-10">
+      <CardHeader className=" text-white p-6 rounded-lg max-w-sm mx-auto mt-2">
         {!loading && (
-          <button onClick={handleGoBack} className="text-sm text-white mt-4">
-            &lt;- Go Back
-          </button>
+          <div className="flex items-center mb-4">
+            <button onClick={handleGoBack} className="rounded-full p-2 mr-2">
+              <ArrowLeft className="rounded-full  w-4 h-4" />
+            </button>
+            <span className="text-sm">Go Back</span>
+          </div>
         )}
         <CardTitle className="">Bridge23 Early Investors</CardTitle>
       </CardHeader>
