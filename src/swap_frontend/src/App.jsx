@@ -23,7 +23,7 @@ import {
   CardTitle,
 } from "./components/ui/card";
 import { useToast } from "./components/ui/use-toast";
-import NumberInput from "./components/ui/NumberInput";
+import NumberInput from "./components/ui/numberInput";
 import Spinner from "./components/ui/spinner";
 
 function App() {
@@ -37,6 +37,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [approved, setApproved] = useState(false);
   const [copySuccess, setCopySuccess] = useState("");
+  const [onSwapScreen, setOnSwapScreen] = useState(false);
 
   useEffect(() => {
     checkThatPlugIsConnected();
@@ -130,12 +131,18 @@ function App() {
     setLoading(false);
   }
 
+  const handleGoBack = () => {
+    setOnSwapScreen(false);
+    setApproved(false);
+  };
+
   async function performSwap() {
     if (!isPlugWalletAvailable()) {
       console.log("Plug Wallet is not available.");
       return;
     }
     setLoading(true);
+    setOnSwapScreen(true);
     try {
       const actor = await window.ic.plug.createActor({
         canisterId: BACKEND_CANISTER_ID,
@@ -229,6 +236,11 @@ function App() {
   const swapTokentPage = (
     <>
       <CardHeader className="text-center text-white space-y-10">
+        {!loading && (
+          <button onClick={handleGoBack} className="text-sm text-white mt-4">
+            &lt;- Go Back
+          </button>
+        )}
         <CardTitle className="">Bridge23 Early Investors</CardTitle>
       </CardHeader>
       <div className="text-white text-center w-3/4 mx-auto shadow-lg bg-indigo-400 mb-6 rounded-lg py-2">
@@ -249,7 +261,7 @@ function App() {
           The process will take around 1-2 minutes. <br /> <br />
           Make sure to add our token to your Plug Wallet. <br />
           <br />
-          A little instructions: <br />
+          Instructions: <br />
           1. Go to your Plug Wallet. <br />
           2. Click on "Add Token" <br />
           3. Select "Custom"
@@ -265,7 +277,7 @@ function App() {
           <br />
           6. Contunue
           <br />
-          Succsess!&nbsp; 🎉 🥳
+          Success!&nbsp; 🎉 🥳
         </div>
       )}
     </>
