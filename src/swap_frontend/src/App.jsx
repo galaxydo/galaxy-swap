@@ -23,7 +23,7 @@ import {
   CardTitle,
 } from "./components/ui/card";
 import { useToast } from "./components/ui/use-toast";
-import NumberInput from "./components/ui/numberInput";
+import NumberInput from "./components/ui/NumberInput";
 import Spinner from "./components/ui/spinner";
 
 function App() {
