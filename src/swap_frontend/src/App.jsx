@@ -1,6 +1,8 @@
 import { memo, useEffect, useState } from "react";
 import { Actor, HttpAgent } from "@dfinity/agent";
 import { Principal } from "@dfinity/principal";
+import { PlugMobileProvider } from "@funded-labs/plug-mobile-sdk";
+
 import {
   canisterId as b23CanisterId,
   idlFactory as b23AdlFactory,
@@ -42,19 +44,36 @@ function App() {
   const [onSwapScreen, setOnSwapScreen] = useState(false);
   const [swapCompleted, setSwapCompleted] = useState(false);
   const [exchangeRate, setExchangeRate] = useState("");
+  const isMobile = PlugMobileProvider.isMobileBrowser();
 
   useEffect(() => {
     checkThatPlugIsConnected();
     fetchExchangeRate();
+    checkMobileAndConnect();
   }, []);
 
+  const checkMobileAndConnect = async () => {
+    if (isMobile) {
+      if (!isPlugWalletAvailable()) {
+        console.error("Plug Wallet is not available on this device.");
+        return;
+      }
+      try {
+        await connectPlugWallet();
+      } catch (error) {
+        console.error("Failed to connect Plug Wallet on mobile device:", error);
+      }
+    }
+  };
+
   const agent = new HttpAgent();
-  const exchangeRateactor = Actor.createActor(swapBackendIdlFactory, {
+  const exchangeRateActor = Actor.createActor(swapBackendIdlFactory, {
     agent,
     canisterId: swapBackendCanisterId,
   });
   async function fetchExchangeRate() {
-    const rate = await exchangeRateactor.getExchangeRate();
+    console.log("start fetching exchange rate");
+    const rate = await exchangeRateActor.getExchangeRate();
     console.log(rate);
     setExchangeRate(rate);
   }
