@@ -53,9 +53,9 @@ function App() {
     checkThatPlugIsConnected();
     const handleResize = () => {
       setIsDesktop(window.innerWidth > 768);
-    };
+    }
 
-    window.addEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
   }, []);
 
   // const checkMobileAndConnect = async () => {
@@ -75,9 +75,7 @@ function App() {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center p-4">
-          <h1 className="text-lg text-red-500">
-            Please use a desktop browser to access this webpage.
-          </h1>
+          <h1 className="text-lg text-red-500">Please use a desktop browser to access this webpage.</h1>
         </div>
       </div>
     );
@@ -363,7 +361,7 @@ function App() {
               ? swapTokentPage
               : approveSpendPage
             // If isConnected, also provide a link to download the Plug Wallet
-            <>
+            : <>
               {connectPlugWalletPage}
               <div className="mt-4 text-center">
                 {isConnected && (
@@ -378,7 +376,7 @@ function App() {
                 )}
               </div>
             </>
-          )}
+          }
         </Card>
       </div>
     </main>
