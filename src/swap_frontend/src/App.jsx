@@ -32,6 +32,7 @@ import Spinner from "./components/ui/spinner";
 import ExchangeRate from "./components/ui/exchangeRate";
 import DisconnectPlugWalletButton from "./components/ui/disconnectPlugWalletButton";
 import { ArrowLeft } from "lucide-react";
+import CopyToClipboardButton from "./components/ui/copyToClipboard";
 
 function App() {
   const NNS_LEDGER_CANISTER_ID = nnsLedgerCanisterId;
@@ -48,14 +49,15 @@ function App() {
   const [swapCompleted, setSwapCompleted] = useState(false);
   // const isMobile = PlugMobileProvider.isMobileBrowser();
   const [isDesktop, setIsDesktop] = useState(window.innerWidth > 768);
+  const [isCopied, setIsCopied] = useState(false);
 
   useEffect(() => {
     checkThatPlugIsConnected();
     const handleResize = () => {
       setIsDesktop(window.innerWidth > 768);
-    }
+    };
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
   }, []);
 
   // const checkMobileAndConnect = async () => {
@@ -75,7 +77,9 @@ function App() {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center p-4">
-          <h1 className="text-lg text-red-500">Please use a desktop browser to access this webpage.</h1>
+          <h1 className="text-lg text-red-500">
+            Please use a desktop browser to access this webpage.
+          </h1>
         </div>
       </div>
     );
@@ -193,13 +197,6 @@ function App() {
     setLoading(false);
   }
 
-  const copyToClipboard = (text) => {
-    navigator.clipboard
-      .writeText(text)
-      .then(() => setCopySuccess("Copied!"))
-      .catch((err) => console.error("Failed to copy text: ", err));
-  };
-
   const connectPlugWalletPage = (
     <>
       <CardHeader className="text-center text-white space-y-10">
@@ -302,13 +299,15 @@ function App() {
           2. Click on "Add Token" <br />
           3. Select "Custom"
           <br />
-          4. Token canister ID: <br />
-          <p
-            className="text-lg text-center text-lime-200 underline hover:no-underline cursor-pointer"
-            onClick={() => copyToClipboard(BACKEND_CANISTER_ID)}
-          >
-            {BACKEND_CANISTER_ID}
-          </p>
+          4. Token canister ID:
+          <br />
+          <div className="inline-flex items-center border-2 my-2 pl-2 bg-indigo-600 rounded">
+            <span className="text-white flex-grow">
+              wexwn-tyaaa-aaaap-ag72a-cai
+            </span>
+            <CopyToClipboardButton textToCopy="wexwn-tyaaa-aaaap-ag72a-cai" />
+          </div>
+          <br />
           5. Token standard: ICRC1
           <br />
           6. Continue
@@ -353,15 +352,18 @@ function App() {
         <DisconnectPlugWalletButton setIsConnected={setIsConnected} />
       ) : null}
       <div className="flex items-center justify-center min-h-screen">
-        <Card className="max-w-sm w-full bg-indigo-900 shadow-2xl shadow-indigo-600/50 rounded-lg p-4 border-none">
-          {isConnected
-            ? swapCompleted
-              ? gratitudePage
-              : approved
-              ? swapTokentPage
-              : approveSpendPage
+        <Card className="max-w-sm w-full bg-indigo-900 shadow-lg shadow-indigo-600/20 rounded-lg p-4 border-none">
+          {isConnected ? (
+            swapCompleted ? (
+              gratitudePage
+            ) : approved ? (
+              swapTokenPage
+            ) : (
+              approveSpendPage
+            )
+          ) : (
             // If isConnected, also provide a link to download the Plug Wallet
-            : <>
+            <>
               {connectPlugWalletPage}
               <div className="mt-4 text-center">
                 {isConnected && (
@@ -376,7 +378,7 @@ function App() {
                 )}
               </div>
             </>
-          }
+          )}
         </Card>
       </div>
     </main>
