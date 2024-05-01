@@ -354,12 +354,15 @@ function App() {
       ) : null}
       <div className="flex items-center justify-center min-h-screen">
         <Card className="max-w-sm w-full bg-indigo-900 shadow-2xl shadow-indigo-600/50 rounded-lg p-4 border-none">
-          {isConnected
-            ? swapCompleted
-              ? gratitudePage
-              : approved
-                ? swapTokenPage
-                : approveSpendPage
+          {isConnected ? (
+            swapCompleted ? (
+              gratitudePage
+            ) : approved ? (
+              swapTokenPage
+            ) : (
+              approveSpendPage
+            )
+          ) : (
             // If isConnected, also provide a link to download the Plug Wallet
             <>
               {connectPlugWalletPage}
