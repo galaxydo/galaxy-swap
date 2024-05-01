@@ -25,6 +25,7 @@ import {
 import { useToast } from "./components/ui/use-toast";
 import NumberInput from "./components/ui/NumberInput";
 import Spinner from "./components/ui/spinner";
+import { ArrowLeft } from "lucide-react";
 
 function App() {
   const NNS_LEDGER_CANISTER_ID = nnsLedgerCanisterId;
@@ -38,10 +39,26 @@ function App() {
   const [approved, setApproved] = useState(false);
   const [copySuccess, setCopySuccess] = useState("");
   const [onSwapScreen, setOnSwapScreen] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth > 768);
 
   useEffect(() => {
     checkThatPlugIsConnected();
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth > 768);
+    }
+
+    window.addEventListener('resize', handleResize);
   }, []);
+
+  if (!isDesktop) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center p-4">
+          <h1 className="text-lg text-red-500">Please use a desktop browser to access this webpage.</h1>
+        </div>
+      </div>
+    );
+  }
 
   async function checkThatPlugIsConnected() {
     try {
@@ -233,13 +250,16 @@ function App() {
     </>
   );
 
-  const swapTokentPage = (
+  const swapTokenPage = (
     <>
-      <CardHeader className="text-center text-white space-y-10">
+      <CardHeader className=" text-white p-6 rounded-lg max-w-sm mx-auto mt-2">
         {!loading && (
-          <button onClick={handleGoBack} className="text-sm text-white mt-4">
-            &lt;- Go Back
-          </button>
+          <div className="flex items-center mb-4">
+            <button onClick={handleGoBack} className="rounded-full p-2 mr-2">
+              <ArrowLeft className="rounded-full  w-4 h-4" />
+            </button>
+            <span className="text-sm">Go Back</span>
+          </div>
         )}
         <CardTitle className="">Bridge23 Early Investors</CardTitle>
       </CardHeader>
@@ -275,7 +295,7 @@ function App() {
           </p>
           5. Token standard: ICRC1
           <br />
-          6. Contunue
+          6. Continue
           <br />
           Success!&nbsp; 🎉 🥳
         </div>
@@ -289,9 +309,25 @@ function App() {
         <Card className="max-w-sm w-full bg-indigo-900 shadow-2xl shadow-indigo-600/50 rounded-lg p-4 border-none">
           {isConnected
             ? approved
-              ? swapTokentPage
+              ? swapTokenPage
               : approveSpendPage
-            : connectPlugWalletPage}
+            // If isConnected, also provide a link to download the Plug Wallet
+            : <>
+              {connectPlugWalletPage}
+              <div className="mt-4 text-center">
+                {isConnected && (
+                  <a
+                    href="https://plugwallet.ooo/"
+                    className="text-blue-500 underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Download or Open Plug Wallet
+                  </a>
+                )}
+              </div>
+            </>
+          }
         </Card>
       </div>
     </main>

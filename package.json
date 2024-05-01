@@ -16,6 +16,7 @@
     "src/swap_frontend"
   ],
   "dependencies": {
-    "@dfinity/auth-client": "^1.2.0"
+    "@dfinity/auth-client": "^1.2.0",
+    "lucide-react": "^0.376.0"
   }
 }
