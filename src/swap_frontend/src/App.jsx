@@ -1,3 +1,4 @@
+// src/app.jsx
 import { memo, useEffect, useState } from "react";
 import { Principal } from "@dfinity/principal";
 // import { PlugMobileProvider } from "@funded-labs/plug-mobile-sdk";
@@ -27,7 +28,7 @@ import {
   CardTitle,
 } from "./components/ui/card";
 import { useToast } from "./components/ui/use-toast";
-import NumberInput from "./components/ui/NumberInput";
+import NumberInput from "./components/ui/numberInput";
 import Spinner from "./components/ui/spinner";
 import ExchangeRate from "./components/ui/exchangeRate";
 import DisconnectPlugWalletButton from "./components/ui/disconnectPlugWalletButton";
@@ -358,8 +359,8 @@ function App() {
             ? swapCompleted
               ? gratitudePage
               : approved
-              ? swapTokentPage
-              : approveSpendPage
+                ? swapTokenPage
+                : approveSpendPage
             // If isConnected, also provide a link to download the Plug Wallet
             : <>
               {connectPlugWalletPage}
