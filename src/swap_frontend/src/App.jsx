@@ -31,6 +31,7 @@ import NumberInput from "./components/ui/NumberInput";
 import Spinner from "./components/ui/spinner";
 import ExchangeRate from "./components/ui/exchangeRate";
 import DisconnectPlugWalletButton from "./components/ui/disconnectPlugWalletButton";
+import { ArrowLeft } from "lucide-react";
 
 function App() {
   const NNS_LEDGER_CANISTER_ID = nnsLedgerCanisterId;
@@ -46,9 +47,15 @@ function App() {
   const [onSwapScreen, setOnSwapScreen] = useState(false);
   const [swapCompleted, setSwapCompleted] = useState(false);
   // const isMobile = PlugMobileProvider.isMobileBrowser();
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth > 768);
 
   useEffect(() => {
     checkThatPlugIsConnected();
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth > 768);
+    }
+
+    window.addEventListener('resize', handleResize);
   }, []);
 
   // const checkMobileAndConnect = async () => {
@@ -64,6 +71,15 @@ function App() {
   //     }
   //   }
   // };
+  if (!isDesktop) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center p-4">
+          <h1 className="text-lg text-red-500">Please use a desktop browser to access this webpage.</h1>
+        </div>
+      </div>
+    );
+  }
 
   async function checkThatPlugIsConnected() {
     try {
@@ -79,18 +95,6 @@ function App() {
   const isPlugWalletAvailable = () => {
     return window.ic && window.ic.plug;
   };
-
-  // console.log('IDL Factory type:', typeof swapBackendIdlFactory);
-  // // console.log('IDL Factory output:', swapBackendIdlFactory(IDL));
-  // try {
-  //   const exchangeRateActor = Actor.createActor(swapBackendIdlFactory, {
-  //     agent,
-  //     canisterId: swapBackendCanisterId,
-  //   });
-  //   console.log('Actor created:', exchangeRateActor);
-  // } catch (error) {
-  //   console.error('Error creating actor:', error);
-  // }
 
   const connectPlugWallet = async () => {
     if (isPlugWalletAvailable()) {
@@ -262,7 +266,7 @@ function App() {
     </>
   );
 
-  const swapTokentPage = (
+  const swapTokenPage = (
     <>
       <CardHeader className="relative text-center text-white">
         <div className="absolute right-0 top-0 mr-2 text-sm text-white">
@@ -307,7 +311,7 @@ function App() {
           </p>
           5. Token standard: ICRC1
           <br />
-          6. Contunue
+          6. Continue
           <br />
           Success!&nbsp; 🎉 🥳
         </div>
@@ -356,7 +360,23 @@ function App() {
               : approved
               ? swapTokentPage
               : approveSpendPage
-            : connectPlugWalletPage}
+            // If isConnected, also provide a link to download the Plug Wallet
+            : <>
+              {connectPlugWalletPage}
+              <div className="mt-4 text-center">
+                {isConnected && (
+                  <a
+                    href="https://plugwallet.ooo/"
+                    className="text-blue-500 underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Download or Open Plug Wallet
+                  </a>
+                )}
+              </div>
+            </>
+          }
         </Card>
       </div>
     </main>
