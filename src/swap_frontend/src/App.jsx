@@ -1,7 +1,8 @@
 import { memo, useEffect, useState } from "react";
-import { Actor, HttpAgent } from "@dfinity/agent";
 import { Principal } from "@dfinity/principal";
-import { PlugMobileProvider } from "@funded-labs/plug-mobile-sdk";
+// import { PlugMobileProvider } from "@funded-labs/plug-mobile-sdk";
+// import { IDL } from '@dfinity/agent';
+import { Actor, HttpAgent } from "@dfinity/agent";
 
 import {
   canisterId as b23CanisterId,
@@ -28,6 +29,7 @@ import {
 import { useToast } from "./components/ui/use-toast";
 import NumberInput from "./components/ui/NumberInput";
 import Spinner from "./components/ui/spinner";
+import ExchangeRate from "./components/ui/exchangeRate";
 import DisconnectPlugWalletButton from "./components/ui/disconnectPlugWalletButton";
 
 function App() {
@@ -43,40 +45,25 @@ function App() {
   const [copySuccess, setCopySuccess] = useState("");
   const [onSwapScreen, setOnSwapScreen] = useState(false);
   const [swapCompleted, setSwapCompleted] = useState(false);
-  const [exchangeRate, setExchangeRate] = useState("");
-  const isMobile = PlugMobileProvider.isMobileBrowser();
+  // const isMobile = PlugMobileProvider.isMobileBrowser();
 
   useEffect(() => {
     checkThatPlugIsConnected();
-    fetchExchangeRate();
-    checkMobileAndConnect();
   }, []);
 
-  const checkMobileAndConnect = async () => {
-    if (isMobile) {
-      if (!isPlugWalletAvailable()) {
-        console.error("Plug Wallet is not available on this device.");
-        return;
-      }
-      try {
-        await connectPlugWallet();
-      } catch (error) {
-        console.error("Failed to connect Plug Wallet on mobile device:", error);
-      }
-    }
-  };
-
-  const agent = new HttpAgent();
-  const exchangeRateActor = Actor.createActor(swapBackendIdlFactory, {
-    agent,
-    canisterId: swapBackendCanisterId,
-  });
-  async function fetchExchangeRate() {
-    console.log("start fetching exchange rate");
-    const rate = await exchangeRateActor.getExchangeRate();
-    console.log(rate);
-    setExchangeRate(rate);
-  }
+  // const checkMobileAndConnect = async () => {
+  //   if (isMobile) {
+  //     if (!isPlugWalletAvailable()) {
+  //       console.error("Plug Wallet is not available on this device.");
+  //       return;
+  //     }
+  //     try {
+  //       await connectPlugWallet();
+  //     } catch (error) {
+  //       console.error("Failed to connect Plug Wallet on mobile device:", error);
+  //     }
+  //   }
+  // };
 
   async function checkThatPlugIsConnected() {
     try {
@@ -92,6 +79,18 @@ function App() {
   const isPlugWalletAvailable = () => {
     return window.ic && window.ic.plug;
   };
+
+  // console.log('IDL Factory type:', typeof swapBackendIdlFactory);
+  // // console.log('IDL Factory output:', swapBackendIdlFactory(IDL));
+  // try {
+  //   const exchangeRateActor = Actor.createActor(swapBackendIdlFactory, {
+  //     agent,
+  //     canisterId: swapBackendCanisterId,
+  //   });
+  //   console.log('Actor created:', exchangeRateActor);
+  // } catch (error) {
+  //   console.error('Error creating actor:', error);
+  // }
 
   const connectPlugWallet = async () => {
     if (isPlugWalletAvailable()) {
@@ -110,13 +109,6 @@ function App() {
       setIsConnected(false);
     }
   };
-
-  async function disconnectPlug() {
-    if (isPlugWalletAvailable()) {
-      // await window.ic.plug.disconnect();
-      setIsConnected(false);
-    }
-  }
 
   async function importToken() {
     try {
@@ -281,6 +273,11 @@ function App() {
       <div className="text-white text-center w-3/4 mx-auto shadow-lg bg-indigo-400 mb-6 rounded-lg py-2">
         {spendAmount} ICP
       </div>
+      <ExchangeRate
+        swapBackendIdlFactory={swapBackendIdlFactory}
+        swapBackendCanisterId={swapBackendCanisterId}
+        icpAmount={spendAmount}
+      />
       <Button
         onClick={performSwap}
         disabled={loading}
@@ -348,13 +345,6 @@ function App() {
 
   return (
     <main>
-      <div className="text-white text-center">
-        {loading ? (
-          <p>Loading...</p>
-        ) : (
-          <p className="text-white">Current Exchange Rate: {exchangeRate}</p>
-        )}
-      </div>
       {isConnected ? (
         <DisconnectPlugWalletButton setIsConnected={setIsConnected} />
       ) : null}
