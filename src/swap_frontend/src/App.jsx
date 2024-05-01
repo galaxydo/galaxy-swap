@@ -1,3 +1,4 @@
+// src/app.jsx
 import { memo, useEffect, useState } from "react";
 import { Principal } from "@dfinity/principal";
 // import { PlugMobileProvider } from "@funded-labs/plug-mobile-sdk";
@@ -27,7 +28,7 @@ import {
   CardTitle,
 } from "./components/ui/card";
 import { useToast } from "./components/ui/use-toast";
-import NumberInput from "./components/ui/NumberInput";
+import NumberInput from "./components/ui/numberInput";
 import Spinner from "./components/ui/spinner";
 import ExchangeRate from "./components/ui/exchangeRate";
 import DisconnectPlugWalletButton from "./components/ui/disconnectPlugWalletButton";
@@ -352,16 +353,13 @@ function App() {
         <DisconnectPlugWalletButton setIsConnected={setIsConnected} />
       ) : null}
       <div className="flex items-center justify-center min-h-screen">
-        <Card className="max-w-sm w-full bg-indigo-900 shadow-lg shadow-indigo-600/20 rounded-lg p-4 border-none">
-          {isConnected ? (
-            swapCompleted ? (
-              gratitudePage
-            ) : approved ? (
-              swapTokenPage
-            ) : (
-              approveSpendPage
-            )
-          ) : (
+        <Card className="max-w-sm w-full bg-indigo-900 shadow-2xl shadow-indigo-600/50 rounded-lg p-4 border-none">
+          {isConnected
+            ? swapCompleted
+              ? gratitudePage
+              : approved
+                ? swapTokenPage
+                : approveSpendPage
             // If isConnected, also provide a link to download the Plug Wallet
             <>
               {connectPlugWalletPage}
