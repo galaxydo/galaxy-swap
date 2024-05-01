@@ -22,7 +22,7 @@ shared ({ caller = initializer }) actor class () = self {
   private stable var _exchangeRate : Nat = 200;
   private stable var _exchangeEnabled : Bool = false;
   private stable var _MAX_SALE_ICP : Nat = 250_0000_0000;
-
+  //what about fee (10_000) ICP?
   /**
   * Types
   */

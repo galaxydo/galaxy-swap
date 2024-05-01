@@ -107,7 +107,7 @@
       "wasm": ""
     },
     "swap_backend": {
-      "dependencies": ["b23token"],
+      "dependencies": ["b23token", "nns-ledger"],
       "main": "src/swap_backend/main.mo",
       "type": "motoko"
     },
