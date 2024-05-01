@@ -1,5 +1,9 @@
 import { memo, useEffect, useState } from "react";
 import { Principal } from "@dfinity/principal";
+// import { PlugMobileProvider } from "@funded-labs/plug-mobile-sdk";
+// import { IDL } from '@dfinity/agent';
+import { Actor, HttpAgent } from "@dfinity/agent";
+
 import {
   canisterId as b23CanisterId,
   idlFactory as b23AdlFactory,
@@ -25,6 +29,8 @@ import {
 import { useToast } from "./components/ui/use-toast";
 import NumberInput from "./components/ui/NumberInput";
 import Spinner from "./components/ui/spinner";
+import ExchangeRate from "./components/ui/exchangeRate";
+import DisconnectPlugWalletButton from "./components/ui/disconnectPlugWalletButton";
 import { ArrowLeft } from "lucide-react";
 
 function App() {
@@ -39,6 +45,8 @@ function App() {
   const [approved, setApproved] = useState(false);
   const [copySuccess, setCopySuccess] = useState("");
   const [onSwapScreen, setOnSwapScreen] = useState(false);
+  const [swapCompleted, setSwapCompleted] = useState(false);
+  // const isMobile = PlugMobileProvider.isMobileBrowser();
   const [isDesktop, setIsDesktop] = useState(window.innerWidth > 768);
 
   useEffect(() => {
@@ -50,6 +58,19 @@ function App() {
     window.addEventListener("resize", handleResize);
   }, []);
 
+  // const checkMobileAndConnect = async () => {
+  //   if (isMobile) {
+  //     if (!isPlugWalletAvailable()) {
+  //       console.error("Plug Wallet is not available on this device.");
+  //       return;
+  //     }
+  //     try {
+  //       await connectPlugWallet();
+  //     } catch (error) {
+  //       console.error("Failed to connect Plug Wallet on mobile device:", error);
+  //     }
+  //   }
+  // };
   if (!isDesktop) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -95,13 +116,6 @@ function App() {
     }
   };
 
-  async function disconnectPlug() {
-    if (isPlugWalletAvailable()) {
-      // await window.ic.plug.disconnect();
-      setIsConnected(false);
-    }
-  }
-
   async function importToken() {
     try {
       await window.ic.plug.requestImportToken({
@@ -127,13 +141,14 @@ function App() {
         canisterId: NNS_LEDGER_CANISTER_ID,
         interfaceFactory: nnsLedgerIdlFactory,
       });
+      console.log("spendAmount:", spendAmount * 1e8 + 10_000);
 
       const result = await actor.icrc2_approve({
         fee: [],
         memo: [],
         from_subaccount: [],
         created_at_time: [],
-        amount: spendAmount + 10_000,
+        amount: spendAmount * 1e8 + 10_000,
         expected_allowance: [],
         expires_at: [],
         spender: {
@@ -171,8 +186,9 @@ function App() {
         "Actor created successfully, attempting to call swapIcpToToken.",
         actor
       );
-      const result = await actor.swapIcpToToken(spendAmount);
+      const result = await actor.swapIcpToToken(spendAmount * 1e8);
       console.log("Swap token:", result);
+      setSwapCompleted(true);
     } catch (error) {
       console.error("Error performing swap:", error);
     }
@@ -231,7 +247,7 @@ function App() {
       </CardHeader>
       <NumberInput
         initial={spendAmount}
-        min={1}
+        min={10}
         max={250}
         onChange={handleSpendAmountChange}
       />
@@ -242,7 +258,7 @@ function App() {
         <Button
           onClick={approveSpend}
           className="text-white text-lg bg-indigo-500 hover:bg-indigo-600 w-full py-2 rounded shadow-lg"
-          disabled={spendAmount < 1 || spendAmount > 250 || loading}
+          disabled={spendAmount < 10 || spendAmount > 250 || loading}
         >
           {loading && <Spinner />}
           {loading && <span className="mr-2"></span>}
@@ -254,20 +270,20 @@ function App() {
 
   const swapTokenPage = (
     <>
-      <CardHeader className=" text-white p-6 rounded-lg max-w-sm mx-auto mt-2">
-        {!loading && (
-          <div className="flex items-center mb-4">
-            <button onClick={handleGoBack} className="rounded-full p-2 mr-2">
-              <ArrowLeft className="rounded-full  w-4 h-4" />
-            </button>
-            <span className="text-sm">Go Back</span>
-          </div>
-        )}
+      <CardHeader className="relative text-center text-white">
+        <div className="absolute right-0 top-0 mr-2 text-sm text-white">
+          {!loading && <button onClick={handleGoBack}>&lt;- Go Back</button>}
+        </div>
         <CardTitle className="">Bridge23 Early Investors</CardTitle>
       </CardHeader>
       <div className="text-white text-center w-3/4 mx-auto shadow-lg bg-indigo-400 mb-6 rounded-lg py-2">
         {spendAmount} ICP
       </div>
+      <ExchangeRate
+        swapBackendIdlFactory={swapBackendIdlFactory}
+        swapBackendCanisterId={swapBackendCanisterId}
+        icpAmount={spendAmount}
+      />
       <Button
         onClick={performSwap}
         disabled={loading}
@@ -305,17 +321,47 @@ function App() {
     </>
   );
 
+  const gratitudePage = (
+    <>
+      <CardHeader className="relative text-center text-white">
+        <CardTitle className="">Thank you 🫡</CardTitle>
+        <CardTitle className="">Dear Investors!</CardTitle>
+      </CardHeader>
+      <CardDescription className="text-white text-lg">
+        On behalf of the entire Bridge23 team, we extend our deepest gratitude
+        for your early support in acquiring our tokens. Your confidence and
+        commitment in our product are invaluable to us. Your investment not only
+        fuels our progress but also strengthens our resolve to deliver a product
+        that we all can be proud of. We look forward to achieving great things
+        together.
+        <br />
+        <br />
+        Warm regards
+        <br />
+        <br />
+        The Bridge23 Team{" "}
+        <img
+          src="../public/favicon.png"
+          alt="Bridge23 Logo"
+          className="w-8 inline"
+        />
+      </CardDescription>
+    </>
+  );
+
   return (
     <main>
+      {isConnected ? (
+        <DisconnectPlugWalletButton setIsConnected={setIsConnected} />
+      ) : null}
       <div className="flex items-center justify-center min-h-screen">
         <Card className="max-w-sm w-full bg-indigo-900 shadow-2xl shadow-indigo-600/50 rounded-lg p-4 border-none">
-          {isConnected ? (
-            approved ? (
-              swapTokenPage
-            ) : (
-              approveSpendPage
-            )
-          ) : (
+          {isConnected
+            ? swapCompleted
+              ? gratitudePage
+              : approved
+              ? swapTokentPage
+              : approveSpendPage
             // If isConnected, also provide a link to download the Plug Wallet
             <>
               {connectPlugWalletPage}
