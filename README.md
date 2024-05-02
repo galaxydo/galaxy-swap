@@ -26,19 +26,18 @@ gives you this:
 }
 ```
 
-Alternative if you can't check, you need to follow this step 
+Alternative if you can't check, you need to follow this step
 
 1. Open your terminal and navigate to the dfx configuration directory `cd /root/.config/dfx`
 2. Use a text editor to create or modify the networks.json file `nano networks.json`
-3. Copy and paste the following content into the networks.json file 
+3. Copy and paste the following content into the networks.json file
 4. Save and exit the editor. In nano, you can do this by pressing CTRL+X, then press Y to confirm saving, and finally press Enter
 5. Make sure there are no contradictory network settings in your project’s dfx.json, navigate to `cd /root/swap`
 6. Open the dfx.json file in a text editor `nano dfx.json`
 7. Ensure no networks configurations conflict or redefine the local network setup there. If found, modify or remove them
 
-
-
 Running dfx processes
+
 1. Run `dfx start --clean` in the first terminal. leave it running there so that you see the logs
 2. In a separate terminal run `dfx nns install` and wait for it to finish
 
@@ -147,4 +146,18 @@ Sending the following argument:
 )
 
 Do you want to initialize the canister with this argument? [y/N]
+choose y to continue to final process
 ```
+
+The expected output similar like this:
+Deployed canisters.
+
+````
+URLs:
+  Frontend canister via browser
+    swap_frontend: http://0.0.0.0:8080/?canisterId=be2us-64aaa-aaaaa-qaabq-cai
+  Backend canister via Candid interface:
+    b23token: http://0.0.0.0:8080/?canisterId=br5f7-7uaaa-aaaaa-qaaca-cai&id=bkyz2-fmaaa-aaaaa-qaaaq-cai
+    swap_backend: http://0.0.0.0:8080/?canisterId=br5f7-7uaaa-aaaaa-qaaca-cai&id=bd3sg-teaaa-aaaaa-qaaba-cai
+    ```
+````
