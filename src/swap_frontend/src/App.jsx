@@ -33,7 +33,7 @@ import ExchangeRate from "./components/ui/exchangeRate";
 import DisconnectPlugWalletButton from "./components/ui/disconnectPlugWalletButton";
 import { ArrowLeft } from "lucide-react";
 import CopyToClipboardButton from "./components/ui/copyToClipboard";
-import DialogWithVideoConnect from "./components/dialogWithVideoConnect";
+import DialogWithVideoConnect from "./components/DialogWithVideoConnect";
 import InviteCode from "./components/InviteCode";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "./components/ui/use-toast";
