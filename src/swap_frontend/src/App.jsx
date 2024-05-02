@@ -27,7 +27,6 @@ import {
   CardHeader,
   CardTitle,
 } from "./components/ui/card";
-import { useToast } from "./components/ui/use-toast";
 import NumberInput from "./components/ui/numberInput";
 import Spinner from "./components/ui/spinner";
 import ExchangeRate from "./components/ui/exchangeRate";
@@ -35,6 +34,9 @@ import DisconnectPlugWalletButton from "./components/ui/disconnectPlugWalletButt
 import { ArrowLeft } from "lucide-react";
 import CopyToClipboardButton from "./components/ui/copyToClipboard";
 import DialogWithVideoConnect from "./components/dialogWithVideoConnect";
+import InviteCode from "./components/InviteCode";
+import { Toaster } from "@/components/ui/toaster";
+import { useToast } from "./components/ui/use-toast";
 
 function App() {
   const NNS_LEDGER_CANISTER_ID = nnsLedgerCanisterId;
@@ -42,7 +44,6 @@ function App() {
   const TOKEN_CANISTER_ID = b23CanisterId;
 
   const [isConnected, setIsConnected] = useState(false);
-  const { toast } = useToast();
   const [spendAmount, setSpendAmount] = useState(10);
   const [loading, setLoading] = useState(false);
   const [approved, setApproved] = useState(false);
@@ -51,7 +52,8 @@ function App() {
   const [swapCompleted, setSwapCompleted] = useState(false);
   // const isMobile = PlugMobileProvider.isMobileBrowser();
   const [isDesktop, setIsDesktop] = useState(window.innerWidth > 768);
-  const [isCopied, setIsCopied] = useState(false);
+  const [inviteCode, setInviteCode] = useState("");
+  const { toast } = useToast();
 
   useEffect(() => {
     checkThatPlugIsConnected();
@@ -108,6 +110,10 @@ function App() {
         const publicKey = await window.ic.plug.requestConnect({
           whitelist: [NNS_LEDGER_CANISTER_ID, BACKEND_CANISTER_ID],
         });
+        toast({
+          title: "Success",
+          description: "Your Plug wallet has been successfully connected 🥳",
+        });
         setIsConnected(true);
         console.log(`The connected user's public key is:`, publicKey);
       } catch (error) {
@@ -115,6 +121,12 @@ function App() {
         setIsConnected(false);
       }
     } else {
+      toast({
+        className: "text-xl bg-red-500 text-gray",
+        title: "Failed",
+        description:
+          "Plug Wallet is not available. Please check the Plug Wallet extension",
+      });
       console.log("Plug Wallet is not available.");
       setIsConnected(false);
     }
@@ -294,7 +306,8 @@ function App() {
           The process will take around 1-2 minutes. <br />
           Make sure to add our token to your Plug Wallet. <br />
           <br />
-          Instructions: <br />
+          Add WBR23 Token Instructions: <br />
+          Token Canister ID: <br />
           <div className="inline-flex items-center border-2 my-2 pl-2 bg-indigo-600 rounded">
             <span className=" flex-grow">wexwn-tyaaa-aaaap-ag72a-cai</span>
             <CopyToClipboardButton textToCopy="wexwn-tyaaa-aaaap-ag72a-cai" />
@@ -302,8 +315,8 @@ function App() {
           <br />
           Token standard: ICRC1
           <br />
-          <video className="w-full my-4" controls>
-            <source src="/B23_Token.mov" type="video/mp4" />
+          <video className="w-full my-4 rounded" controls>
+            <source src="/B23_Token.mp4" type="video/mp4" />
             Your browser does not support the video tag.
           </video>
         </div>
@@ -340,43 +353,50 @@ function App() {
   );
 
   return (
-    <main>
-      <DialogWithVideoConnect />
-      {isConnected ? (
-        <DisconnectPlugWalletButton setIsConnected={setIsConnected} />
-      ) : null}
+    <>
+      <main>
+        <InviteCode setInviteCode={setInviteCode} />
+        <DialogWithVideoConnect />
+        {isConnected ? (
+          <DisconnectPlugWalletButton setIsConnected={setIsConnected} />
+        ) : null}
 
-      <div className="flex items-center justify-center min-h-screen">
-        <Card className="max-w-md w-full bg-indigo-900 shadow-2xl shadow-indigo-600/50 rounded-lg p-4 border-none my-4">
-          {isConnected ? (
-            swapCompleted ? (
-              gratitudePage
-            ) : approved ? (
-              swapTokenPage
+        <div className="flex items-center justify-center min-h-screen">
+          <Card className="max-w-md w-full bg-indigo-900 shadow-2xl shadow-indigo-600/50 rounded-lg p-4 border-none my-4">
+            {isConnected ? (
+              swapCompleted ? (
+                gratitudePage
+              ) : approved ? (
+                swapTokenPage
+              ) : (
+                approveSpendPage
+              )
             ) : (
-              approveSpendPage
-            )
-          ) : (
-            // If isConnected, also provide a link to download the Plug Wallet
-            <>
-              {connectPlugWalletPage}
-              <div className="mt-4 text-center">
-                {isConnected && (
-                  <a
-                    href="https://plugwallet.ooo/"
-                    className="text-blue-500 underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Download or Open Plug Wallet
-                  </a>
-                )}
-              </div>
-            </>
-          )}
-        </Card>
-      </div>
-    </main>
+              // If isConnected, also provide a link to download the Plug Wallet
+              <>
+                {connectPlugWalletPage}
+                <div className="mt-4 text-center">
+                  {isConnected && (
+                    <a
+                      href="https://plugwallet.ooo/"
+                      className="text-blue-500 underline"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Download or Open Plug Wallet
+                    </a>
+                  )}
+                </div>
+              </>
+            )}
+            {inviteCode && isConnected && (
+              <p className="text-center">Your invite code is: {inviteCode}</p>
+            )}
+          </Card>
+        </div>
+      </main>
+      <Toaster />
+    </>
   );
 }
 
