@@ -40,7 +40,7 @@ function ExchangeRate({
 
   return (
     <>
-      <div className="text-white text-center text-lg mb-2">
+      <div className=" text-center text-lg mb-2">
         Exchange Rate: {exchangeRate}&nbsp;
         <img
           src="../public/favicon.png"
@@ -48,7 +48,7 @@ function ExchangeRate({
           className="w-6 inline pb-1"
         />
       </div>
-      <div className="text-white text-center text-lg mb-4">
+      <div className=" text-center text-lg mb-4">
         You will get: {exchangeRate * icpAmount}&nbsp;
         <img
           src="../public/favicon.png"

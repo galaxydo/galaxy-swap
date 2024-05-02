@@ -1,8 +1,14 @@
 // src/components/ui/numberInput.jsx
-import React, { useState } from 'react';
-import './NumberInput.css';
+import React, { useState } from "react";
+import "./NumberInput.css";
 
-function NumberInput({ initial = 10, min = 10, max = 250, onChange, disabled = false }) {
+function NumberInput({
+  initial = 10,
+  min = 10,
+  max = 250,
+  onChange,
+  disabled = false,
+}) {
   const [value, setValue] = useState(initial);
 
   const handleIncrement = () => {
@@ -27,7 +33,7 @@ function NumberInput({ initial = 10, min = 10, max = 250, onChange, disabled = f
       if (!isNaN(intValue)) {
         setValue(intValue);
       } else {
-        setValue('');
+        setValue("");
       }
     }
   };
@@ -47,35 +53,36 @@ function NumberInput({ initial = 10, min = 10, max = 250, onChange, disabled = f
   };
 
   return (
-    <div className='px-8 text-lg'>
+    <div className="px-8 text-lg">
       <div className="flex items-center justify-center">
-          <button 
-              className="text-white bg-indigo-500 hover:bg-indigo-600 px-7 py-2 rounded-l-full"
-              onClick={handleDecrement} disabled={disabled || value <= min}
-          >
-              -
-          </button>
-          <div className="relative flex-grow ">
-              <input 
-                  type="number"
-                  className="w-full text-center text-white px-6 py-2 focus:outline-none bg-indigo-500"
-                  value={value} 
-                  onChange={handleChange} 
-                  onBlur={handleBlur} 
-                  disabled={disabled}
-                  style={{ paddingRight: '2rem' }}
-              />
-              <span className="absolute inset-y-0 right-0 px-3 flex text-white items-center">
-              ICP
-              </span>
-          </div>
-          <button 
-              className="text-white bg-indigo-500 hover:bg-indigo-600 px-7 py-2 rounded-r-full"
-              onClick={handleIncrement} 
-              disabled={disabled || value >= max}
-          >
-              +
-          </button>
+        <button
+          className=" bg-indigo-500 hover:bg-indigo-600 px-7 py-2 rounded-l-full"
+          onClick={handleDecrement}
+          disabled={disabled || value <= min}
+        >
+          -
+        </button>
+        <div className="relative flex-grow ">
+          <input
+            type="number"
+            className="w-full text-center  px-6 py-2 focus:outline-none bg-indigo-500"
+            value={value}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            disabled={disabled}
+            style={{ paddingRight: "2rem" }}
+          />
+          <span className="absolute inset-y-0 right-0 px-3 flex  items-center">
+            ICP
+          </span>
+        </div>
+        <button
+          className=" bg-indigo-500 hover:bg-indigo-600 px-7 py-2 rounded-r-full"
+          onClick={handleIncrement}
+          disabled={disabled || value >= max}
+        >
+          +
+        </button>
       </div>
     </div>
   );
