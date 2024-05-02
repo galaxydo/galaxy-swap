@@ -49,7 +49,7 @@ function App() {
   const [approved, setApproved] = useState(false);
   const [copySuccess, setCopySuccess] = useState("");
   const [onSwapScreen, setOnSwapScreen] = useState(false);
-  const [swapCompleted, setSwapCompleted] = useState(false);
+  const [swapCompleted, setSwapCompleted] = useState(true);
   // const isMobile = PlugMobileProvider.isMobileBrowser();
   const [isDesktop, setIsDesktop] = useState(window.innerWidth > 768);
   const [inviteCode, setInviteCode] = useState("");
@@ -330,7 +330,7 @@ function App() {
         <CardTitle className="">Thank you 🫡</CardTitle>
         <CardTitle className="">Dear Investors!</CardTitle>
       </CardHeader>
-      <CardDescription className=" text-lg">
+      <CardDescription className=" text-lg mb-8">
         On behalf of the entire Bridge23 team, we extend our deepest gratitude
         for your early support in acquiring our tokens. Your confidence and
         commitment in our product are invaluable to us. Your investment not only
