@@ -49,7 +49,7 @@ function App() {
   const [approved, setApproved] = useState(false);
   const [copySuccess, setCopySuccess] = useState("");
   const [onSwapScreen, setOnSwapScreen] = useState(false);
-  const [swapCompleted, setSwapCompleted] = useState(true);
+  const [swapCompleted, setSwapCompleted] = useState(false);
   // const isMobile = PlugMobileProvider.isMobileBrowser();
   const [isDesktop, setIsDesktop] = useState(window.innerWidth > 768);
   const [inviteCode, setInviteCode] = useState("");
