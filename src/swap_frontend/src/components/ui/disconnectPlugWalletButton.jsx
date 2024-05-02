@@ -23,8 +23,8 @@ function DisconnectPlugWalletButton({ setIsConnected }) {
     <div>
       <Button
         onClick={disconnectPlug}
-        className="absolute top-0 right-0 m-4 text-white text-lg bg-indigo-500 hover:bg-indigo-600 py-2 rounded shadow-lg shadow-indigo-600/50"
-        >
+        className="absolute top-0 right-0 m-4  text-lg bg-indigo-500 hover:bg-indigo-600 py-2 rounded shadow-lg shadow-indigo-600/50"
+      >
         Disconnect
       </Button>
     </div>

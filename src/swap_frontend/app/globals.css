@@ -83,7 +83,27 @@
   body {
     @apply bg-background text-foreground;
     background-color: var(--background);
-    color-scheme: dark;
+  }
+  :root {
+    --foreground: 217 25% 88%;
+    --card-foreground: 217 25% 88%;
+    --popover-foreground: 217 25% 88%;
+    --primary-foreground: 217 25% 88%;
+    --secondary-foreground: 217 25% 88%;
+    --muted-foreground: 217 25% 88%;
+    --accent-foreground: 217 25% 88%;
+    --destructive-foreground: 217 25% 88%;
+  }
+
+  .dark {
+    --foreground: 217 25% 88%;
+    --card-foreground: 217 25% 88%;
+    --popover-foreground: 217 25% 88%;
+    --primary-foreground: 217 25% 88%;
+    --secondary-foreground: 217 25% 88%;
+    --muted-foreground: 217 25% 88%;
+    --accent-foreground: 217 25% 88%;
+    --destructive-foreground: 217 25% 88%;
   }
 }
 

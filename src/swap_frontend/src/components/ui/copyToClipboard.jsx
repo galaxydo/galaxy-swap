@@ -17,7 +17,7 @@ function CopyToClipboardButton({ textToCopy }) {
   return (
     <button
       onClick={handleCopy}
-      className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded p-2 ml-2"
+      className="bg-indigo-600 hover:bg-indigo-700  font-semibold rounded p-2 ml-2"
     >
       {copied ? <FiCheck size={16} /> : <FiClipboard size={16} />}
     </button>
