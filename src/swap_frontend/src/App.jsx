@@ -292,16 +292,10 @@ function App() {
       <CardFooter className="text-center"></CardFooter>
       {loading && (
         <div className="text-white">
-          The process will take around 1-2 minutes. <br /> <br />
+          The process will take around 1-2 minutes. <br />
           Make sure to add our token to your Plug Wallet. <br />
           <br />
           Instructions: <br />
-          1. Go to your Plug Wallet. <br />
-          2. Click on "Add Token" <br />
-          3. Select "Custom"
-          <br />
-          4. Token canister ID:
-          <br />
           <div className="inline-flex items-center border-2 my-2 pl-2 bg-indigo-600 rounded">
             <span className="text-white flex-grow">
               wexwn-tyaaa-aaaap-ag72a-cai
@@ -309,11 +303,12 @@ function App() {
             <CopyToClipboardButton textToCopy="wexwn-tyaaa-aaaap-ag72a-cai" />
           </div>
           <br />
-          5. Token standard: ICRC1
+          Token standard: ICRC1
           <br />
-          6. Continue
-          <br />
-          Success!&nbsp; 🎉 🥳
+          <video className="w-full my-4" controls>
+            <source src="/B23_Token.mov" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
         </div>
       )}
     </>
@@ -353,7 +348,7 @@ function App() {
         <DisconnectPlugWalletButton setIsConnected={setIsConnected} />
       ) : null}
       <div className="flex items-center justify-center min-h-screen">
-        <Card className="max-w-sm w-full bg-indigo-900 shadow-2xl shadow-indigo-600/50 rounded-lg p-4 border-none">
+        <Card className="max-w-md w-full bg-indigo-900 shadow-2xl shadow-indigo-600/50 rounded-lg p-4 border-none my-4">
           {isConnected ? (
             swapCompleted ? (
               gratitudePage
