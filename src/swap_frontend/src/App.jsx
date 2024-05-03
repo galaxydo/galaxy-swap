@@ -37,6 +37,7 @@ import DialogWithVideoConnect from "./components/dialogWithVideoConnect";
 import InviteCode from "./components/inviteCode";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "./components/ui/use-toast";
+import VideoPlayer from "./components/videoPlayer";
 
 function App() {
   const NNS_LEDGER_CANISTER_ID = nnsLedgerCanisterId;
@@ -46,7 +47,7 @@ function App() {
   const SUBDIVISIONS_PER_ICP = 1e4; // TODO: temp for testing
 
   const [isConnected, setIsConnected] = useState(false);
-  const [spendAmount, setSpendAmount] = useState(10);
+  const [spendAmount, setSpendAmount] = useState(100);
   const [loading, setLoading] = useState(false);
   const [approved, setApproved] = useState(false);
   const [copySuccess, setCopySuccess] = useState("");
@@ -204,7 +205,10 @@ function App() {
         "Actor created successfully, attempting to call swapIcpToToken.",
         actor
       );
-      const result = await actor.swapIcpToToken(spendAmount * SUBDIVISIONS_PER_ICP, [inviteCode]);
+      const result = await actor.swapIcpToToken(
+        spendAmount * SUBDIVISIONS_PER_ICP,
+        [inviteCode]
+      );
       console.log("Swap token:", result);
       setSwapCompleted(true);
     } catch (error) {
@@ -300,7 +304,7 @@ function App() {
       >
         {loading && <Spinner />}
         {loading && <span className="mr-2"></span>}
-        <span>{loading ? "Loading..." : "Perform Swap"}</span>
+        <span>{loading ? "Swap is in progress..." : "Perform Swap"}</span>
       </Button>
       <CardFooter className="text-center"></CardFooter>
       {loading && (
@@ -317,10 +321,7 @@ function App() {
           <br />
           Token standard: ICRC1
           <br />
-          <video className="w-full my-4 rounded" controls>
-            <source src="/B23_Token.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
+          <VideoPlayer />
         </div>
       )}
     </>
@@ -345,11 +346,7 @@ function App() {
         <br />
         <br />
         The Bridge23 Team{" "}
-        <img
-          src="../public/favicon.png"
-          alt="Bridge23 Logo"
-          className="w-8 inline"
-        />
+        <img src="/favicon.png" alt="Bridge23 Logo" className="w-8 inline" />
       </CardDescription>
     </>
   );
@@ -392,7 +389,9 @@ function App() {
               </>
             )}
             {inviteCode && isConnected && (
-              <p className="text-center text-sm">Your invite code is: {inviteCode}</p>
+              <p className="text-center text-sm">
+                Your invite code is: {inviteCode}
+              </p>
             )}
           </Card>
         </div>
