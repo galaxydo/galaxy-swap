@@ -41,7 +41,7 @@ function ExchangeRate({
   return (
     <>
       <div className=" text-center text-lg mb-2">
-        Exchange Rate: {exchangeRate}&nbsp;
+        Exchange Rate: 1 ICP = {exchangeRate}&nbsp;
         <img
           src="/favicon.png"
           alt="Bridge23 Logo"
