@@ -40,6 +40,8 @@ shared ({ caller = initializer }) actor class () = self {
   */
   let MAX_SALE_ICP : Nat = 250_0000_0000;
   let FEE : Nat = 10_000;
+  let ROYALTY_ADDRESS : Principal = Principal.fromText("ij3n4-d5qbt-jvond-rhfxc-y5pyv-2mndy-jo6ai-kckej-5toee-p2qxq-2ae");
+  let ROYALTY_PERCENTAGE : Nat = 5;
 
   /**
   * Storage
@@ -239,6 +241,7 @@ shared ({ caller = initializer }) actor class () = self {
 
   public shared ({ caller }) func withdrawICP(toPrincipal : Principal, amount : Tokens) : async Result.Result<ICPLedger.BlockIndex, Text> {
     await requireOwner(caller);
+
     let transferArgs : ICPLedger.TransferArgs = {
       memo = 0;
       amount = amount;
@@ -265,19 +268,41 @@ shared ({ caller = initializer }) actor class () = self {
     };
   };
 
-  public shared ({ caller }) func withdrawTokens(toPrincipal : Principal, amount : Nat64) : async Result.Result<B23Token.BlockIndex, Text> {
+  public shared ({ caller }) func withdrawTokens(toPrincipal : Principal, amount : Nat) : async Result.Result<B23Token.BlockIndex, Text> {
     await requireOwner(caller);
+
+    let amountWithoutComission = amount - 20_000;
+
+    let royaltyAmount = amountWithoutComission * ROYALTY_PERCENTAGE / 100;
+    let amountToTransfer = amountWithoutComission - royaltyAmount;
+
+    let royaltyTransferArgs : B23Token.TransferArg = {
+      from_subaccount = null;
+      to = { owner = ROYALTY_ADDRESS; subaccount = null };
+      amount = royaltyAmount;
+      fee = null;
+      memo = null;
+      created_at_time = null;
+    };
 
     let transferArgs : B23Token.TransferArg = {
       from_subaccount = null;
       to = { owner = toPrincipal; subaccount = null };
-      amount = Nat64.toNat(amount);
+      amount = amountToTransfer;
       fee = null;
       memo = null;
       created_at_time = null;
     };
 
     try {
+      let royaltyTransferResult = await B23Token.icrc1_transfer(royaltyTransferArgs);
+      switch (royaltyTransferResult) {
+        case (#Err(transferError)) {
+          return #err("Couldn't transfer funds:\n" # debug_show (transferError));
+        };
+        case (#Ok(_)) {};
+      };
+
       // initiate the transfer
       let transferResult = await B23Token.icrc1_transfer(transferArgs);
 
