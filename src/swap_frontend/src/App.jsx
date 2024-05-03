@@ -389,7 +389,7 @@ function App() {
             )}
             {inviteCode && isConnected && (
               <p className="text-center text-sm">
-                Your invite code is: {inviteCode}
+                Your invitation code is: {inviteCode}
               </p>
             )}
           </Card>
