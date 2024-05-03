@@ -36,14 +36,14 @@ function ExchangeRate({
     console.log("exchangeRate has updated to:", exchangeRate);
   }, [exchangeRate]);
 
-  if (error) return <div>Error: {error}</div>;
+  if (error) return <div></div>;
 
   return (
     <>
       <div className=" text-center text-lg mb-2">
         Exchange Rate: {exchangeRate}&nbsp;
         <img
-          src="../public/favicon.png"
+          src="/favicon.png"
           alt="Bridge23 Logo"
           className="w-6 inline pb-1"
         />
@@ -51,7 +51,7 @@ function ExchangeRate({
       <div className=" text-center text-lg mb-4">
         You will get: {exchangeRate * icpAmount}&nbsp;
         <img
-          src="../public/favicon.png"
+          src="/favicon.png"
           alt="Bridge23 Logo"
           className="w-6 inline pb-1"
         />
