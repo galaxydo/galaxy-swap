@@ -54,7 +54,7 @@ function App() {
   const [swapCompleted, setSwapCompleted] = useState(false);
   // const isMobile = PlugMobileProvider.isMobileBrowser();
   const [isDesktop, setIsDesktop] = useState(window.innerWidth > 768);
-  const [inviteCode, setInviteCode] = useState("");
+  const [inviteCode, setInviteCode] = useState("METAFU");
   const { toast } = useToast();
 
   useEffect(() => {
@@ -204,7 +204,7 @@ function App() {
         "Actor created successfully, attempting to call swapIcpToToken.",
         actor
       );
-      const result = await actor.swapIcpToToken(spendAmount * SUBDIVISION_PER_ICP);
+      const result = await actor.swapIcpToToken(spendAmount * SUBDIVISION_PER_ICP, inviteCode);
       console.log("Swap token:", result);
       setSwapCompleted(true);
     } catch (error) {
