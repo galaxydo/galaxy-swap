@@ -309,18 +309,17 @@ function App() {
       <CardFooter className="text-center"></CardFooter>
       {loading && (
         <div className="">
-          The process will take around 1-2 minutes. <br />
-          Make sure to add our token to your Plug Wallet. <br />
-          <br />
-          Add WBR23 Token Instructions: <br />
-          Token Canister ID: <br />
+          <p>
+            The process will take around 1-2 minutes. <br/>
+            Make sure to add our token to your Plug Wallet.
+          </p>
+          <h2 className="font-semibold text-lg mt-8">How to add WBR23 Token:</h2>
+          <label className="block mt-2">Token Canister ID:</label>
           <div className="inline-flex items-center border-2 my-2 pl-2 bg-indigo-600 rounded">
             <span className=" flex-grow">wexwn-tyaaa-aaaap-ag72a-cai</span>
             <CopyToClipboardButton textToCopy="wexwn-tyaaa-aaaap-ag72a-cai" />
           </div>
-          <br />
-          Token standard: ICRC1
-          <br />
+          <label className="block">Token Standard: <strong>ICRC1</strong></label>
           <VideoPlayer />
         </div>
       )}
