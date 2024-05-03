@@ -4,6 +4,8 @@ import { Principal } from "@dfinity/principal";
 // import { PlugMobileProvider } from "@funded-labs/plug-mobile-sdk";
 // import { IDL } from '@dfinity/agent';
 import { Actor, HttpAgent } from "@dfinity/agent";
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import AdminPage from "./pages/Admin";
 
 import {
   canisterId as b23CanisterId,
@@ -31,10 +33,9 @@ import NumberInput from "./components/ui/numberInput";
 import Spinner from "./components/ui/spinner";
 import ExchangeRate from "./components/ui/exchangeRate";
 import DisconnectPlugWalletButton from "./components/ui/disconnectPlugWalletButton";
-import { ArrowLeft } from "lucide-react";
 import CopyToClipboardButton from "./components/ui/copyToClipboard";
-import DialogWithVideoConnect from "./components/dialogWithVideoConnect";
-import InviteCode from "./components/inviteCode";
+import DialogWithVideoConnect from "./components/DialogWithVideoConnect";
+import InviteCode from "./components/InviteCode";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "./components/ui/use-toast";
 import VideoPlayer from "./components/videoPlayer";
@@ -353,49 +354,66 @@ function App() {
 
   return (
     <>
-      <main>
-        <InviteCode setInviteCode={setInviteCode} />
-        <DialogWithVideoConnect />
-        {isConnected ? (
-          <DisconnectPlugWalletButton setIsConnected={setIsConnected} />
-        ) : null}
-
-        <div className="flex items-center justify-center min-h-screen">
-          <Card className="max-w-md w-full bg-indigo-900 shadow-2xl shadow-indigo-600/50 rounded-lg p-4 border-none my-4">
-            {isConnected ? (
-              swapCompleted ? (
-                gratitudePage
-              ) : approved ? (
-                swapTokenPage
-              ) : (
-                approveSpendPage
-              )
-            ) : (
-              // If isConnected, also provide a link to download the Plug Wallet
-              <>
-                {connectPlugWalletPage}
-                <div className="mt-4 text-center">
-                  {isConnected && (
-                    <a
-                      href="https://plugwallet.ooo/"
-                      className="text-blue-500 underline"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Download or Open Plug Wallet
-                    </a>
-                  )}
+      <Router>
+        <main>
+          <InviteCode setInviteCode={setInviteCode} />
+          <DialogWithVideoConnect />
+          {isConnected ? (
+            <DisconnectPlugWalletButton setIsConnected={setIsConnected} />
+          ) : null}
+          <Routes>
+            <Route
+              path="/admin"
+              element={
+                <AdminPage
+                  swapBackendIdlFactory={swapBackendIdlFactory}
+                  swapBackendCanisterId={swapBackendCanisterId}
+                />
+              }
+            />
+            <Route
+              path="/"
+              element={
+                <div className="flex items-center justify-center min-h-screen">
+                  <Card className="max-w-md w-full bg-indigo-900 shadow-2xl shadow-indigo-600/50 rounded-lg p-4 border-none my-4">
+                    {isConnected ? (
+                      swapCompleted ? (
+                        gratitudePage
+                      ) : approved ? (
+                        swapTokenPage
+                      ) : (
+                        approveSpendPage
+                      )
+                    ) : (
+                      // If isConnected, also provide a link to download the Plug Wallet
+                      <>
+                        {connectPlugWalletPage}
+                        <div className="mt-4 text-center">
+                          {isConnected && (
+                            <a
+                              href="https://plugwallet.ooo/"
+                              className="text-blue-500 underline"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              Download or Open Plug Wallet
+                            </a>
+                          )}
+                        </div>
+                      </>
+                    )}
+                    {inviteCode && isConnected && (
+                      <p className="text-center text-sm">
+                        Your invite code is: {inviteCode}
+                      </p>
+                    )}
+                  </Card>
                 </div>
-              </>
-            )}
-            {inviteCode && isConnected && (
-              <p className="text-center text-sm">
-                Your invite code is: {inviteCode}
-              </p>
-            )}
-          </Card>
-        </div>
-      </main>
+              }
+            />
+          </Routes>
+        </main>
+      </Router>
       <Toaster />
     </>
   );
