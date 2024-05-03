@@ -36,6 +36,12 @@ shared ({ caller = initializer }) actor class () = self {
   };
 
   /**
+  * Constants
+  */
+  let MAX_SALE_ICP : Nat = 250_0000_0000;
+  let FEE : Nat = 10_000;
+
+  /**
   * Storage
   */
   private stable var _owner : Principal = initializer;
@@ -43,22 +49,8 @@ shared ({ caller = initializer }) actor class () = self {
   private stable var _tokenSold : Nat = 0;
   private stable var _exchangeRate : Nat = 200;
   private stable var _exchangeEnabled : Bool = false;
-
-  /**
-  * Constants
-  */
-  let MAX_SALE_ICP : Nat = 250_0000_0000;
-  let FEE : Nat = 10_000;
-
-  /**
-  * Types
-  */
-  public type Account = Blob;
-  type Tokens = {
-    e8s : Nat64;
-  };
-
   private stable var _stableLogs : [Log] = [];
+
   var logs = Buffer.Buffer<Log>(1024);
 
   /**
@@ -250,7 +242,7 @@ shared ({ caller = initializer }) actor class () = self {
     let transferArgs : ICPLedger.TransferArgs = {
       memo = 0;
       amount = amount;
-      fee = { e8s = FEE };
+      fee = { e8s = 10_000 };
       from_subaccount = null;
       to = Principal.toLedgerAccount(toPrincipal, null);
       created_at_time = null;

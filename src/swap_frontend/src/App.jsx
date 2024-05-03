@@ -42,6 +42,8 @@ function App() {
   const NNS_LEDGER_CANISTER_ID = nnsLedgerCanisterId;
   const BACKEND_CANISTER_ID = swapBackendCanisterId;
   const TOKEN_CANISTER_ID = b23CanisterId;
+  // const SUBDIVISION_PER_ICP = 1e8;
+  const SUBDIVISIONS_PER_ICP = 1e4; // TODO: temp for testing
 
   const [isConnected, setIsConnected] = useState(false);
   const [spendAmount, setSpendAmount] = useState(10);
@@ -157,14 +159,14 @@ function App() {
         canisterId: NNS_LEDGER_CANISTER_ID,
         interfaceFactory: nnsLedgerIdlFactory,
       });
-      console.log("spendAmount:", spendAmount * 1e8 + 10_000);
+      console.log("spendAmount:", spendAmount * SUBDIVISION_PER_ICP + 10_000);
 
       const result = await actor.icrc2_approve({
         fee: [],
         memo: [],
         from_subaccount: [],
         created_at_time: [],
-        amount: spendAmount * 1e8 + 10_000,
+        amount: spendAmount * SUBDIVISION_PER_ICP + 10_000,
         expected_allowance: [],
         expires_at: [],
         spender: {
@@ -202,7 +204,7 @@ function App() {
         "Actor created successfully, attempting to call swapIcpToToken.",
         actor
       );
-      const result = await actor.swapIcpToToken(spendAmount * 1e8);
+      const result = await actor.swapIcpToToken(spendAmount * SUBDIVISION_PER_ICP);
       console.log("Swap token:", result);
       setSwapCompleted(true);
     } catch (error) {
