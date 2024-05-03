@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import "./NumberInput.css";
 
 function NumberInput({
-  initial = 10,
+  initial = 100,
   min = 10,
   max = 250,
   onChange,

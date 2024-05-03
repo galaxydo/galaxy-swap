@@ -5,14 +5,13 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogFooter,
-  DialogClose,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 import React from "react";
 import CopyToClipboardButton from "./ui/copyToClipboard";
 import { Button } from "./ui/button";
+import VideoPlayer from "./videoPlayer";
 
 function DialogWithVideoConnect() {
   return (
@@ -48,10 +47,7 @@ function DialogWithVideoConnect() {
               </div>
             </div>
             Token standard: ICRC1 <br />
-            <video className="w-full mt-1 rounded" controls>
-              <source src="/B23_Token.mp4" type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
+            <VideoPlayer className="mt-1" />
           </div>
         </ScrollArea>
       </DialogContent>
