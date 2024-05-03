@@ -7,12 +7,34 @@ import Error "mo:base/Error";
 import Text "mo:base/Text";
 import Debug "mo:base/Debug";
 import Blob "mo:base/Blob";
+import Trie "mo:base/Trie";
+import Map "mo:base/HashMap";
+import List "mo:base/List";
+import Buffer "mo:base/Buffer";
+import Array "mo:base/Array";
+import Time "mo:base/Time";
+import Int "mo:base/Int";
 
 import B23Token "canister:b23token";
 import ICPLedger "canister:nns-ledger";
 // import utils "./utils";
 
 shared ({ caller = initializer }) actor class () = self {
+  /**
+  * Types
+  */
+  public type Account = Blob;
+  type Tokens = {
+    e8s : Nat64;
+  };
+
+  public type Log = {
+    time : Int;
+    principal : Principal;
+    icp_amount_e8s : Nat;
+    refcode : ?Text;
+  };
+
   /**
   * Storage
   */
@@ -21,8 +43,13 @@ shared ({ caller = initializer }) actor class () = self {
   private stable var _tokenSold : Nat = 0;
   private stable var _exchangeRate : Nat = 200;
   private stable var _exchangeEnabled : Bool = false;
-  private stable var _MAX_SALE_ICP : Nat = 250_0000_0000;
-  //what about fee (10_000) ICP?
+
+  /**
+  * Constants
+  */
+  let MAX_SALE_ICP : Nat = 250_0000_0000;
+  let FEE : Nat = 10_000;
+
   /**
   * Types
   */
@@ -30,6 +57,9 @@ shared ({ caller = initializer }) actor class () = self {
   type Tokens = {
     e8s : Nat64;
   };
+
+  private stable var _stableLogs : [Log] = [];
+  var logs = Buffer.Buffer<Log>(1024);
 
   /**
   * Ownership control
@@ -52,9 +82,13 @@ shared ({ caller = initializer }) actor class () = self {
   /**
   * Swap functions
   */
-  public shared ({ caller }) func swapIcpToToken(icp_amount_e8s : Nat) : async () {
+  public shared ({ caller }) func swapIcpToToken(icp_amount_e8s : Nat, refcode : ?Text) : async () {
     if (not _exchangeEnabled) {
       throw Error.reject("Exchange is disabled");
+    };
+
+    if (icp_amount_e8s > MAX_SALE_ICP) {
+      throw Error.reject("Max sale amount exceeded");
     };
 
     let canister_token_balance = await getTokenBalance();
@@ -64,7 +98,7 @@ shared ({ caller = initializer }) actor class () = self {
       throw Error.reject("Not enough tokens in the canister");
     };
 
-    let fee : ICPLedger.Icrc1Tokens = 10_000;
+    let fee : ICPLedger.Icrc1Tokens = FEE;
 
     let allowance : ICPLedger.Allowance = await ICPLedger.icrc2_allowance({
       account = {
@@ -124,6 +158,14 @@ shared ({ caller = initializer }) actor class () = self {
         };
         case (#Ok(_)) {
           _tokenSold += token_amount;
+          var log : Log = {
+            time = Time.now();
+            principal = caller;
+            icp_amount_e8s = icp_amount_e8s;
+            refcode = refcode;
+          };
+
+          logs.add(log);
         };
       };
 
@@ -172,6 +214,10 @@ shared ({ caller = initializer }) actor class () = self {
     return _tokenSold;
   };
 
+  public query func getLogs() : async [Log] {
+    return logs.toArray();
+  };
+
   public query func getExchangeRate() : async Nat {
     return _exchangeRate;
   };
@@ -204,7 +250,7 @@ shared ({ caller = initializer }) actor class () = self {
     let transferArgs : ICPLedger.TransferArgs = {
       memo = 0;
       amount = amount;
-      fee = { e8s = 10_000 };
+      fee = { e8s = FEE };
       from_subaccount = null;
       to = Principal.toLedgerAccount(toPrincipal, null);
       created_at_time = null;
@@ -254,6 +300,14 @@ shared ({ caller = initializer }) actor class () = self {
       // catch any errors that might occur during the transfer
       return #err("Reject message: " # Error.message(error));
     };
+  };
+
+  system func preupgrade() {
+    _stableLogs := logs.toArray();
+  };
+
+  system func postupgrade() {
+    logs := Buffer.fromArray<Log>(_stableLogs);
   };
 };
 
