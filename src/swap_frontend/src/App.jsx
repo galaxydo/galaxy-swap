@@ -50,13 +50,13 @@ function App() {
   const [spendAmount, setSpendAmount] = useState(100);
   const [loading, setLoading] = useState(false);
   const [approved, setApproved] = useState(false);
-  const [copySuccess, setCopySuccess] = useState("");
   const [onSwapScreen, setOnSwapScreen] = useState(false);
   const [swapCompleted, setSwapCompleted] = useState(false);
   // const isMobile = PlugMobileProvider.isMobileBrowser();
   const [isDesktop, setIsDesktop] = useState(window.innerWidth > 768);
   const [inviteCode, setInviteCode] = useState("METAFU");
   const { toast } = useToast();
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     checkThatPlugIsConnected();
@@ -155,6 +155,7 @@ function App() {
   async function approveSpend() {
     if (!isPlugWalletAvailable()) return;
     setLoading(true);
+    setErrorMessage("");
     try {
       const actor = await window.ic.plug.createActor({
         canisterId: NNS_LEDGER_CANISTER_ID,
@@ -176,10 +177,23 @@ function App() {
           subaccount: [],
         },
       });
-      console.log("Approve:", result);
-      setApproved(true);
+
+      if (result.Err && result.Err.InsufficientFunds) {
+        setErrorMessage(
+          `Insufficient Funds: Your current balance is ${result.Err.InsufficientFunds.balance} ICP.`
+        );
+        toast({
+          title: "Error",
+          className: "text-xl bg-red-500 text-gray",
+          description: `Insufficient Funds: Your current balance is ${result.Err.InsufficientFunds.balance} ICP.`,
+        });
+      } else {
+        console.log("Approve:", result);
+        setApproved(true);
+      }
     } catch (error) {
       console.error("Error during transaction approval:", error);
+      setErrorMessage("An unexpected error occurred during transaction approval.");
     }
     setLoading(false);
   }
@@ -298,6 +312,11 @@ function App() {
       <div className="w-[22rem] text-center mx-auto shadow-lg bg-indigo-400 font-bold text-xl mb-6 rounded py-2">
         To Invest: {spendAmount} ICP
       </div>
+      <ExchangeRate
+        swapBackendIdlFactory={swapBackendIdlFactory}
+        swapBackendCanisterId={swapBackendCanisterId}
+        icpAmount={spendAmount}
+      />
       <div className="flex justify-center items-center">
         <Button
           onClick={performSwap}
