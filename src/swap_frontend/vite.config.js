@@ -1,4 +1,4 @@
-import path from 'path';
+import path from "path";
 import { fileURLToPath, URL } from "url";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
@@ -11,8 +11,8 @@ export default defineConfig({
   build: {
     emptyOutDir: true,
     rollupOptions: {
-      external: ['components/ui']
-    }
+      external: ["components/ui"],
+    },
   },
   optimizeDeps: {
     esbuildOptions: {
@@ -28,6 +28,9 @@ export default defineConfig({
         changeOrigin: true,
       },
     },
+    headers: {
+      "Permissions-Policy": "clipboard-write=(self)",
+    },
   },
   plugins: [
     react(),
@@ -42,13 +45,15 @@ export default defineConfig({
       },
       {
         find: "components/ui",
-        replacement: fileURLToPath(new URL("../components/ui", import.meta.url)),
+        replacement: fileURLToPath(
+          new URL("../components/ui", import.meta.url)
+        ),
       },
       // Note this line where path is used. The 'path' module must be imported at the top.
       {
-        find: '@',
-        replacement: path.resolve(__dirname, './src')
-      }
+        find: "@",
+        replacement: path.resolve(__dirname, "./src"),
+      },
     ],
   },
 });

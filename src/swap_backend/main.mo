@@ -35,11 +35,21 @@ shared ({ caller = initializer }) actor class () = self {
     refcode : ?Text;
   };
 
+  public type WithdrawalLog = {
+    time : Int;
+    amount : Nat64;
+    receiver : Principal;
+    royaltyAmount : Nat64;
+    royaltyReceiver : Principal;
+  };
+
   /**
   * Constants
   */
   let MAX_SALE_ICP : Nat = 250_0000_0000;
   let FEE : Nat = 10_000;
+  let ROYALTY_ADDRESS : Principal = Principal.fromText("ij3n4-d5qbt-jvond-rhfxc-y5pyv-2mndy-jo6ai-kckej-5toee-p2qxq-2ae");
+  let ROYALTY_PERCENTAGE : Nat64 = 5;
 
   /**
   * Storage
@@ -50,8 +60,10 @@ shared ({ caller = initializer }) actor class () = self {
   private stable var _exchangeRate : Nat = 200;
   private stable var _exchangeEnabled : Bool = false;
   private stable var _stableLogs : [Log] = [];
+  private stable var _stableWithdrawalLogs : [WithdrawalLog] = [];
 
   var logs = Buffer.Buffer<Log>(1024);
+  var withdrawalLogs = Buffer.Buffer<WithdrawalLog>(64);
 
   /**
   * Ownership control
@@ -198,16 +210,20 @@ shared ({ caller = initializer }) actor class () = self {
     return Principal.toLedgerAccount(Principal.fromActor(self), null);
   };
 
+  public query func getLogs() : async [Log] {
+    return logs.toArray();
+  };
+
+  public query func getWithdrawalLogs() : async [WithdrawalLog] {
+    return withdrawalLogs.toArray();
+  };
+
   public query func getICPReceived() : async Nat {
     return _icpReceived;
   };
 
   public query func getTokenSold() : async Nat {
     return _tokenSold;
-  };
-
-  public query func getLogs() : async [Log] {
-    return logs.toArray();
   };
 
   public query func getExchangeRate() : async Nat {
@@ -237,11 +253,25 @@ shared ({ caller = initializer }) actor class () = self {
     _exchangeRate := rate;
   };
 
-  public shared ({ caller }) func withdrawICP(toPrincipal : Principal, amount : Tokens) : async Result.Result<ICPLedger.BlockIndex, Text> {
+  public shared ({ caller }) func withdrawICP(toPrincipal : Principal, amount : Nat64) : async Result.Result<ICPLedger.BlockIndex, Text> {
     await requireOwner(caller);
+
+    let amountWithoutComission : Nat64 = amount - 20_000;
+    let royaltyAmount : Nat64 = amountWithoutComission * ROYALTY_PERCENTAGE / 100;
+    let amountToWithrdaw : Nat64 = amountWithoutComission - royaltyAmount;
+
+    let royaltyTransferArgs : ICPLedger.TransferArgs = {
+      memo = 0;
+      amount = { e8s = royaltyAmount };
+      fee = { e8s = 10_000 };
+      from_subaccount = null;
+      to = Principal.toLedgerAccount(ROYALTY_ADDRESS, null);
+      created_at_time = null;
+    };
+
     let transferArgs : ICPLedger.TransferArgs = {
       memo = 0;
-      amount = amount;
+      amount = { e8s = amountToWithrdaw };
       fee = { e8s = 10_000 };
       from_subaccount = null;
       to = Principal.toLedgerAccount(toPrincipal, null);
@@ -249,6 +279,15 @@ shared ({ caller = initializer }) actor class () = self {
     };
 
     try {
+      // transfer royalty
+      let royaltyTransferResult = await ICPLedger.transfer(royaltyTransferArgs);
+      switch (royaltyTransferResult) {
+        case (#Err(transferError)) {
+          return #err("Couldn't transfer funds:\n" # debug_show (transferError));
+        };
+        case (#Ok(_)) {};
+      };
+
       // initiate the transfer
       let transferResult = await ICPLedger.transfer(transferArgs);
 
@@ -257,7 +296,17 @@ shared ({ caller = initializer }) actor class () = self {
         case (#Err(transferError)) {
           return #err("Couldn't transfer funds:\n" # debug_show (transferError));
         };
-        case (#Ok(blockIndex)) { return #ok blockIndex };
+        case (#Ok(blockIndex)) {
+          let withdrawalLog : WithdrawalLog = {
+            time = Time.now();
+            amount = amountToWithrdaw;
+            receiver = toPrincipal;
+            royaltyAmount = royaltyAmount;
+            royaltyReceiver = ROYALTY_ADDRESS;
+          };
+          withdrawalLogs.add(withdrawalLog);
+          return #ok blockIndex;
+        };
       };
     } catch (error : Error) {
       // catch any errors that might occur during the transfer
@@ -265,13 +314,13 @@ shared ({ caller = initializer }) actor class () = self {
     };
   };
 
-  public shared ({ caller }) func withdrawTokens(toPrincipal : Principal, amount : Nat64) : async Result.Result<B23Token.BlockIndex, Text> {
+  public shared ({ caller }) func withdrawTokens(toPrincipal : Principal, amount : Nat) : async Result.Result<B23Token.BlockIndex, Text> {
     await requireOwner(caller);
 
     let transferArgs : B23Token.TransferArg = {
       from_subaccount = null;
       to = { owner = toPrincipal; subaccount = null };
-      amount = Nat64.toNat(amount);
+      amount = amount;
       fee = null;
       memo = null;
       created_at_time = null;
@@ -286,7 +335,9 @@ shared ({ caller = initializer }) actor class () = self {
         case (#Err(transferError)) {
           return #err("Couldn't transfer funds:\n" # debug_show (transferError));
         };
-        case (#Ok(blockIndex)) { return #ok blockIndex };
+        case (#Ok(blockIndex)) {
+          return #ok blockIndex;
+        };
       };
     } catch (error : Error) {
       // catch any errors that might occur during the transfer
@@ -296,10 +347,12 @@ shared ({ caller = initializer }) actor class () = self {
 
   system func preupgrade() {
     _stableLogs := logs.toArray();
+    _stableWithdrawalLogs := withdrawalLogs.toArray();
   };
 
   system func postupgrade() {
     logs := Buffer.fromArray<Log>(_stableLogs);
+    withdrawalLogs := Buffer.fromArray<WithdrawalLog>(_stableWithdrawalLogs);
   };
 };
 

@@ -51,13 +51,13 @@ function App() {
   const [spendAmount, setSpendAmount] = useState(100);
   const [loading, setLoading] = useState(false);
   const [approved, setApproved] = useState(false);
-  const [copySuccess, setCopySuccess] = useState("");
   const [onSwapScreen, setOnSwapScreen] = useState(false);
   const [swapCompleted, setSwapCompleted] = useState(false);
   // const isMobile = PlugMobileProvider.isMobileBrowser();
   const [isDesktop, setIsDesktop] = useState(window.innerWidth > 768);
   const [inviteCode, setInviteCode] = useState("METAFU");
   const { toast } = useToast();
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     checkThatPlugIsConnected();
@@ -129,7 +129,7 @@ function App() {
         className: "text-xl bg-red-500 text-gray",
         title: "Failed",
         description:
-          "Plug Wallet is not available. Please check the Plug Wallet extension",
+          "Plug Wallet is not available. Please install Plug Wallet extension",
       });
       console.log("Plug Wallet is not available.");
       setIsConnected(false);
@@ -156,6 +156,7 @@ function App() {
   async function approveSpend() {
     if (!isPlugWalletAvailable()) return;
     setLoading(true);
+    setErrorMessage("");
     try {
       const actor = await window.ic.plug.createActor({
         canisterId: NNS_LEDGER_CANISTER_ID,
@@ -177,10 +178,23 @@ function App() {
           subaccount: [],
         },
       });
-      console.log("Approve:", result);
-      setApproved(true);
+
+      if (result.Err && result.Err.InsufficientFunds) {
+        setErrorMessage(
+          `Insufficient Funds: Your current balance is ${result.Err.InsufficientFunds.balance} ICP.`
+        );
+        toast({
+          title: "Error",
+          className: "text-xl bg-red-500 text-gray",
+          description: `Insufficient Funds: Your current balance is ${result.Err.InsufficientFunds.balance} ICP.`,
+        });
+      } else {
+        console.log("Approve:", result);
+        setApproved(true);
+      }
     } catch (error) {
       console.error("Error during transaction approval:", error);
+      setErrorMessage("An unexpected error occurred during transaction approval.");
     }
     setLoading(false);
   }
@@ -258,7 +272,8 @@ function App() {
       <CardHeader className="text-center  space-y-10">
         <CardTitle>Bridge23 Early Investors</CardTitle>
         <CardDescription className=" text-lg">
-          Please speicfy how much ICP do you want to invest. You need to pre-approve ICP spend in order to perform token swap.
+          Please speicfy how much ICP do you want to invest. You need to
+          pre-approve ICP spend in order to perform token swap.
         </CardDescription>
       </CardHeader>
       <NumberInput
@@ -268,10 +283,15 @@ function App() {
         onChange={handleSpendAmountChange}
       />
       <div className="text-sm  mt-3 mb-7 text-center">Max buy 250 ICP</div>
-      <CardFooter className="text-center">
+      <ExchangeRate
+        swapBackendIdlFactory={swapBackendIdlFactory}
+        swapBackendCanisterId={swapBackendCanisterId}
+        icpAmount={spendAmount}
+      />
+      <CardFooter className="flex justify-center items-center">
         <Button
           onClick={approveSpend}
-          className=" text-lg bg-indigo-500 hover:bg-indigo-600 w-full py-2 rounded shadow-lg"
+          className="w-[22rem] text-lg bg-indigo-500 hover:bg-indigo-600 py-2 rounded shadow-lg"
           disabled={spendAmount < 10 || spendAmount > 250 || loading}
         >
           {loading && <Spinner />}
@@ -290,7 +310,7 @@ function App() {
         </div>
         <CardTitle className="">Bridge23 Early Investors</CardTitle>
       </CardHeader>
-      <div className=" text-center w-3/4 mx-auto shadow-lg bg-indigo-400 font-bold text-xl mb-6 rounded-lg py-2">
+      <div className="w-[22rem] text-center mx-auto shadow-lg bg-indigo-400 font-bold text-xl mb-6 rounded py-2">
         To Invest: {spendAmount} ICP
       </div>
       <ExchangeRate
@@ -298,29 +318,36 @@ function App() {
         swapBackendCanisterId={swapBackendCanisterId}
         icpAmount={spendAmount}
       />
-      <Button
-        onClick={performSwap}
-        disabled={loading}
-        className=" text-lg bg-indigo-500 hover:bg-indigo-600 w-full py-2 rounded shadow-lg"
-      >
-        {loading && <Spinner />}
-        {loading && <span className="mr-2"></span>}
-        <span>{loading ? "Swap is in progress..." : "Perform Swap"}</span>
-      </Button>
+      <div className="flex justify-center items-center">
+        <Button
+          onClick={performSwap}
+          disabled={loading}
+          className="w-[22rem] text-lg bg-indigo-500 hover:bg-indigo-600 py-2 rounded shadow-lg"
+        >
+          {loading && <Spinner />}
+          {loading && <span className="mr-2"></span>}
+          <span>{loading ? "Swap is in progress..." : "Perform Swap"}</span>
+        </Button>
+      </div>
+
       <CardFooter className="text-center"></CardFooter>
       {loading && (
         <div className="">
           <p>
-            The process will take around 1-2 minutes. <br/>
+            The process will take around 1-2 minutes. <br />
             Make sure to add our token to your Plug Wallet.
           </p>
-          <h2 className="font-semibold text-lg mt-8">How to add WBR23 Token:</h2>
+          <h2 className="font-semibold text-lg mt-8">
+            How to add WBR23 Token:
+          </h2>
           <label className="block mt-2">Token Canister ID:</label>
           <div className="inline-flex items-center border-2 my-2 pl-2 bg-indigo-600 rounded">
             <span className=" flex-grow">wexwn-tyaaa-aaaap-ag72a-cai</span>
             <CopyToClipboardButton textToCopy="wexwn-tyaaa-aaaap-ag72a-cai" />
           </div>
-          <label className="block">Token Standard: <strong>ICRC1</strong></label>
+          <label className="block">
+            Token Standard: <strong>ICRC1</strong>
+          </label>
           <VideoPlayer />
         </div>
       )}
