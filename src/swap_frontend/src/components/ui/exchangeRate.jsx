@@ -19,9 +19,7 @@ function ExchangeRate({
     async function fetchExchangeRate() {
       setError(null);
       try {
-        console.log("start fetching exchange rate");
         const rate = await exchangeRateActor.getExchangeRate();
-        console.log(rate);
         setExchangeRate(rate.toString());
       } catch (err) {
         console.error("Error fetching exchange rate:", err);
@@ -31,10 +29,6 @@ function ExchangeRate({
 
     fetchExchangeRate();
   }, [swapBackendIdlFactory, swapBackendCanisterId]);
-
-  useEffect(() => {
-    console.log("exchangeRate has updated to:", exchangeRate);
-  }, [exchangeRate]);
 
   if (error) return <div></div>;
 
