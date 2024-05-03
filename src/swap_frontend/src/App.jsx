@@ -128,7 +128,7 @@ function App() {
         className: "text-xl bg-red-500 text-gray",
         title: "Failed",
         description:
-          "Plug Wallet is not available. Please check the Plug Wallet extension",
+          "Plug Wallet is not available. Please install Plug Wallet extension",
       });
       console.log("Plug Wallet is not available.");
       setIsConnected(false);
