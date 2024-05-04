@@ -52,59 +52,75 @@ function AdminPage({
         fetchLogs();
     }, [swapBackendIdlFactory]);
 
+    // function to handle download csv
+    const downloadCSV = () => {
+        const csvData = convertToCSV(logs);
+        const blog = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blog);
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'logs.csv');
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
+    const convertToCSV = (logs) => {
+        const headers = ["Time", "Principal", "Amount (e8s)", "Refcode"];
+        const rows = logs.map(log => {
+            const timeInSeconds = Number((log.time / BigInt(1e6)).toString());
+            const dateFormatted = format(new Date(timeInSeconds), 'yyyy-MM-dd HH:mm:ss');
+            return [
+                `"${dateFormatted} UTC"`,
+                `${log.principal.toText()}`,
+                `${log.icp_amount_e8s.toString()}`,
+                `${log.refcode || 'N/A'}`
+            ];
+        });
+        return [
+            headers.join(','),
+            ...rows.map(row => row.join(','))
+        ].join('\n');
+    };
+
+    const convertE8sToICP = (e8s) => {
+        return (parseInt(e8s, 10) / 100000000).toFixed(2);
+    }
+
     return (
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 bg-gray-800 text-white">
             <div className="py-8">
-                <div className="border-b border-blue-200 pb-5">
-                    <h1 className="text-lg leading-6 font-medium text-blue-900">Admin Dashboard</h1>
-                </div>
-                {error && <div className="mt-4 bg-red-100 text-red-800 p-2 rounded-md">{error}</div>}
-                <div className="mt-6 flex flex-col">
-                    <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                        <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-                            <div className="shadow overflow-hidden border-b border-blue-200 sm:rounded-lg">
-                                <table className="min-w-full divide-y divide-blue-200">
-                                    <thead className="bg-blue-50">
-                                        <tr>
-                                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-blue-500 uppercase tracking-wider">
-                                                Time
-                                            </th>
-                                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-blue-500 uppercase tracking-wider">
-                                                Principal
-                                            </th>
-                                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-blue-500 uppercase tracking-wider">
-                                                Amount (e8s)
-                                            </th>
-                                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-blue-500 uppercase tracking-wider">
-                                                Refcode
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="bg-white divide-y divide-blue-200">
-                                        {logs.map((log, index) => {
-                                            const timeInSeconds = Number((log.time / BigInt(1e6)).toString());
-                                            return (
-                                                <tr key={index}>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-500">
-                                                        {format(new Date(timeInSeconds), 'yyyy-MM-dd HH:mm:ss')} UTC
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-500">
-                                                        {log.principal.toText()}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-500">
-                                                        {log.icp_amount_e8s.toString()}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-500">
-                                                        {log.refcode || 'N/A'}
-                                                    </td>
-                                                </tr>
-                                            );
-                                        })}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
+                <h1 className="text-lg leading-6 font-medium">Admin Dashboard</h1>
+                {error && <div className="mt-4 bg-red-700 text-white p-2 rounded-md">{error}</div>}
+                <Table className="mt-6">
+                    <TableHeader>
+                        <TableRow className="text-gray-400">
+                            <TableHead>Time</TableHead>
+                            <TableHead>Principal</TableHead>
+                            <TableHead>Amount (ICP)</TableHead>
+                            <TableHead>Refcode</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {logs.map((log, index) => {
+                            const timeInSeconds = Number((log.time / BigInt(1e6)).toString());
+                            const dateFormatted = format(new Date(timeInSeconds), 'yyyy-MM-dd HH:mm:ss');
+                            return (
+                                <TableRow key={index} className={index % 2 ? "bg-gray-700" : "bg-gray-600"}>
+                                    <TableCell>{dateFormatted} UTC</TableCell>
+                                    <TableCell>{log.principal.toText()}</TableCell>
+                                    <TableCell>{convertE8sToICP(log.icp_amount_e8s)}</TableCell>
+                                    <TableCell>{log.refcode || 'N/A'}</TableCell>
+                                </TableRow>
+                            );
+                        })}
+                    </TableBody>
+                </Table>
+                <div className="py-8">
+                    <Button onClick={downloadCSV} className="my-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        Download Logs as CSV
+                    </Button>
                 </div>
             </div>
         </div>
