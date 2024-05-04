@@ -389,7 +389,7 @@ function App() {
           ) : null}
           <Routes>
             <Route
-              path="/admin"
+              path="/admin-728382778"
               element={
                 <AdminPage
                   swapBackendIdlFactory={swapBackendIdlFactory}
