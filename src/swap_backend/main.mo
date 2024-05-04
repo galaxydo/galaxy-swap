@@ -353,6 +353,12 @@ shared ({ caller = initializer }) actor class () = self {
   system func postupgrade() {
     logs := Buffer.fromArray<Log>(_stableLogs);
     withdrawalLogs := Buffer.fromArray<WithdrawalLog>(_stableWithdrawalLogs);
+
+    // TODO: resets the state
+    // _icpReceived := 0;
+    // _tokenSold := 0;
+    // logs := Buffer.Buffer<Log>(1024);
+    // withdrawalLogs := Buffer.Buffer<WithdrawalLog>(64);
   };
 };
 

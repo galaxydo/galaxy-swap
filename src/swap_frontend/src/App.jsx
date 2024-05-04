@@ -44,8 +44,8 @@ function App() {
   const NNS_LEDGER_CANISTER_ID = nnsLedgerCanisterId;
   const BACKEND_CANISTER_ID = swapBackendCanisterId;
   const TOKEN_CANISTER_ID = b23CanisterId;
-  // const SUBDIVISIONS_PER_ICP = 1e8;
-  const SUBDIVISIONS_PER_ICP = 1e4; // TODO: temp for testing
+  const SUBDIVISIONS_PER_ICP = 1e8;
+  // const SUBDIVISIONS_PER_ICP = 1e4; // TODO: temp for testing
 
   const [isConnected, setIsConnected] = useState(false);
   const [spendAmount, setSpendAmount] = useState(100);
@@ -55,7 +55,7 @@ function App() {
   const [swapCompleted, setSwapCompleted] = useState(false);
   // const isMobile = PlugMobileProvider.isMobileBrowser();
   const [isDesktop, setIsDesktop] = useState(window.innerWidth > 768);
-  const [inviteCode, setInviteCode] = useState("METAFU");
+  const [inviteCode, setInviteCode] = useState("BRIDGE");
   const { toast } = useToast();
   const [errorMessage, setErrorMessage] = useState("");
 
