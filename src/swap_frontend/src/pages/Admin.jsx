@@ -81,22 +81,25 @@ function AdminPage({
                                         </tr>
                                     </thead>
                                     <tbody className="bg-white divide-y divide-blue-200">
-                                        {logs.map((log, index) => (
-                                            <tr key={index}>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-500">
-                                                    {format(new Date(log.time / 1e6), 'yyyy-MM-dd HH:mm:ss')} UTC
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-500">
-                                                    {log.principal}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-500">
-                                                    {log.icp_amount_e8s}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-500">
-                                                    {log.refcode || 'N/A'}
-                                                </td>
-                                            </tr>
-                                        ))}
+                                        {logs.map((log, index) => {
+                                            const timeInSeconds = Number((log.time / BigInt(1e6)).toString());
+                                            return (
+                                                <tr key={index}>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-500">
+                                                        {format(new Date(timeInSeconds), 'yyyy-MM-dd HH:mm:ss')} UTC
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-500">
+                                                        {log.principal.toText()}
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-500">
+                                                        {log.icp_amount_e8s.toString()}
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-500">
+                                                        {log.refcode || 'N/A'}
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
                                     </tbody>
                                 </table>
                             </div>
