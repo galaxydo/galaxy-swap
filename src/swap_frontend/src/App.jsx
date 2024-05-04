@@ -4,7 +4,7 @@ import { Principal } from "@dfinity/principal";
 // import { PlugMobileProvider } from "@funded-labs/plug-mobile-sdk";
 // import { IDL } from '@dfinity/agent';
 import { Actor, HttpAgent } from "@dfinity/agent";
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import AdminPage from "./pages/Admin";
 
 import {
@@ -194,7 +194,9 @@ function App() {
       }
     } catch (error) {
       console.error("Error during transaction approval:", error);
-      setErrorMessage("An unexpected error occurred during transaction approval.");
+      setErrorMessage(
+        "An unexpected error occurred during transaction approval."
+      );
     }
     setLoading(false);
   }
@@ -382,11 +384,6 @@ function App() {
     <>
       <Router>
         <main>
-          <InviteCode setInviteCode={setInviteCode} />
-          <DialogWithVideoConnect />
-          {isConnected ? (
-            <DisconnectPlugWalletButton setIsConnected={setIsConnected} />
-          ) : null}
           <Routes>
             <Route
               path="/admin-728382778"
@@ -400,41 +397,49 @@ function App() {
             <Route
               path="/"
               element={
-                <div className="flex items-center justify-center min-h-screen">
-                  <Card className="max-w-md w-full bg-indigo-900 shadow-2xl shadow-indigo-600/50 rounded-lg p-4 border-none my-4">
-                    {isConnected ? (
-                      swapCompleted ? (
-                        gratitudePage
-                      ) : approved ? (
-                        swapTokenPage
+                <>
+                  <InviteCode setInviteCode={setInviteCode} />
+                  <DialogWithVideoConnect />
+                  {isConnected ? (
+                    <DisconnectPlugWalletButton
+                      setIsConnected={setIsConnected}
+                    />
+                  ) : null}
+                  <div className="flex items-center justify-center min-h-screen">
+                    <Card className="max-w-md w-full bg-indigo-900 shadow-2xl shadow-indigo-600/50 rounded-lg p-4 border-none my-4">
+                      {isConnected ? (
+                        swapCompleted ? (
+                          gratitudePage
+                        ) : approved ? (
+                          swapTokenPage
+                        ) : (
+                          approveSpendPage
+                        )
                       ) : (
-                        approveSpendPage
-                      )
-                    ) : (
-                      // If isConnected, also provide a link to download the Plug Wallet
-                      <>
-                        {connectPlugWalletPage}
-                        <div className="mt-4 text-center">
-                          {isConnected && (
-                            <a
-                              href="https://plugwallet.ooo/"
-                              className="text-blue-500 underline"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              Download or Open Plug Wallet
-                            </a>
-                          )}
-                        </div>
-                      </>
-                    )}
-                    {inviteCode && isConnected && (
-                      <p className="text-center text-sm">
-                        Your invite code is: {inviteCode}
-                      </p>
-                    )}
-                  </Card>
-                </div>
+                        <>
+                          {connectPlugWalletPage}
+                          <div className="mt-4 text-center">
+                            {isConnected && (
+                              <a
+                                href="https://plugwallet.ooo/"
+                                className="text-blue-500 underline"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                Download or Open Plug Wallet
+                              </a>
+                            )}
+                          </div>
+                        </>
+                      )}
+                      {inviteCode && isConnected && (
+                        <p className="text-center text-sm">
+                          Your invite code is: {inviteCode}
+                        </p>
+                      )}
+                    </Card>
+                  </div>
+                </>
               }
             />
           </Routes>
