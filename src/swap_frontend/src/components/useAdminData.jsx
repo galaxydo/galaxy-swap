@@ -9,8 +9,6 @@ function useAdminData(swapBackendIdlFactory) {
     logs: [],
     exchangeRate: "",
     icpBalance: "",
-    tokenBalance: "",
-    tokenSold: "",
     icpReceived: "",
     ispReceived: "",
   });
@@ -19,8 +17,8 @@ function useAdminData(swapBackendIdlFactory) {
     logs: true,
     exchangeRate: true,
     icpBalance: true,
-    tokenBalance: true,
-    tokenSold: true,
+    tokenBalance: "",
+    tokenSold: "",
     icpReceived: true,
   });
 
