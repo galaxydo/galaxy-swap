@@ -1,134 +1,113 @@
-// src/pages/admin.jsx
-import React, { useState, useEffect } from "react";
-import { Actor, HttpAgent } from "@dfinity/agent";
+import React from "react";
+import useAdminData from "../components/useAdminData";
+import downloadCSV from "../components/downloadCSV";
 import { format } from "date-fns";
 import {
   Table,
   TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
   TableHeader,
   TableRow,
+  TableCell,
+  TableHead,
 } from "../components/ui/table";
-import { Dialog, DialogContent, DialogTrigger } from "../components/ui/dialog";
 import { Button } from "../components/ui/button";
+import Spinner from "../components/ui/spinner";
+import { Card } from "../components/ui/card";
 
 function AdminPage({ swapBackendIdlFactory, swapBackendCanisterId }) {
-  const [logs, setLogs] = useState([]);
-  const [error, setError] = useState(null);
+  const { data, error, loadingState } = useAdminData(swapBackendIdlFactory);
 
-  // Mainnet URL for the Internet Computer
-  const IC_MAINNET_URL = "https://icp0.io/";
-  const agent = new HttpAgent({
-    host: IC_MAINNET_URL,
-  });
-  const MAINNET_CANISTER_ID = "oyzj3-naaaa-aaaag-qjuka-cai";
-  const actor = Actor.createActor(swapBackendIdlFactory, {
-    agent,
-    canisterId: MAINNET_CANISTER_ID,
-  });
+  const {
+    logs,
+    exchangeRate,
+    icpBalance,
+    tokenBalance,
+    tokenSold,
+    icpReceived,
+  } = data;
 
-  async function fetchLogs() {
-    setError(null);
-    try {
-      const fetchedLogs = await actor.getLogs();
-      setLogs(fetchedLogs);
-      console.log("Fetched logs:", fetchedLogs);
-    } catch (err) {
-      console.error("Error fetching logs:", err);
-      setError(err.toString());
-    }
-  }
+  const convertE8sToICP = (e8s) => (parseInt(e8s, 10) / 1e8).toFixed(2);
 
-  
-  useEffect(() => {
-    fetchLogs();
-  }, [swapBackendIdlFactory]);
-
-  // function to handle download csv
-  const downloadCSV = () => {
-    const csvData = convertToCSV(logs);
-    const blog = new Blob([csvData], { type: "text/csv;charset=utf-8;" });
-    const link = document.createElement("a");
-    const url = URL.createObjectURL(blog);
-    link.setAttribute("href", url);
-    link.setAttribute("download", "logs.csv");
-    link.style.visibility = "hidden";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
-  const convertToCSV = (logs) => {
-    const headers = ["Time", "Principal", "Amount (e8s)", "Refcode"];
-    const rows = logs.map((log) => {
-      const timeInSeconds = Number((log.time / BigInt(1e6)).toString());
-      const dateFormatted = format(
-        new Date(timeInSeconds),
-        "yyyy-MM-dd HH:mm:ss"
-      );
-      return [
-        `"${dateFormatted} UTC"`,
-        `${log.principal.toText()}`,
-        `${log.icp_amount_e8s.toString()}`,
-        `${log.refcode || "N/A"}`,
-      ];
-    });
-    return [headers.join(","), ...rows.map((row) => row.join(","))].join("\n");
-  };
-
-  const convertE8sToICP = (e8s) => {
-    return (parseInt(e8s, 10) / 100000000).toFixed(2);
-  };
+  const renderLoadingSpinner = (isLoading) => isLoading && <Spinner />;
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 bg-gray-800 text-white">
-      <div className="py-8">
-        <h1 className="text-lg leading-6 font-medium">Admin Dashboard</h1>
-        {error && (
-          <div className="mt-4 bg-red-700 text-white p-2 rounded-md">
-            {error}
-          </div>
-        )}
-        <Table className="mt-6">
-          <TableHeader>
-            <TableRow className="text-gray-400">
-              <TableHead>Time</TableHead>
-              <TableHead>Principal</TableHead>
-              <TableHead>Amount (ICP)</TableHead>
-              <TableHead>Refcode</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {logs.map((log, index) => {
-              const timeInSeconds = Number((log.time / BigInt(1e6)).toString());
-              const dateFormatted = format(
-                new Date(timeInSeconds),
-                "yyyy-MM-dd HH:mm:ss"
-              );
-              return (
-                <TableRow
-                  key={index}
-                  className={index % 2 ? "bg-gray-700" : "bg-gray-600"}
-                >
-                  <TableCell>{dateFormatted} UTC</TableCell>
-                  <TableCell>{log.principal.toText()}</TableCell>
-                  <TableCell>{convertE8sToICP(log.icp_amount_e8s)}</TableCell>
-                  <TableCell>{log.refcode || "N/A"}</TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-        <div className="py-8">
-          <Button
-            onClick={downloadCSV}
-            className="my-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          >
-            Download Logs as CSV
-          </Button>
+    <div className="max-w-7xl mx-auto p-6 bg-gray-800 text-white">
+      <h1 className="text-3xl font-bold mb-6 text-center">Admin Dashboard</h1>
+      {error && (
+        <div className="mb-6 p-4 bg-red-600 text-white rounded-md shadow-lg">
+          <strong>Error:</strong> {error}
         </div>
+      )}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <Card className="bg-gray-700 text-white p-4 rounded-lg shadow-md flex flex-col items-center justify-center">
+          <span className="font-semibold">Exchange Rate:</span>&nbsp;
+          {!exchangeRate
+            ? renderLoadingSpinner(loadingState.exchangeRate)
+            : exchangeRate}
+        </Card>
+        <Card className="bg-gray-700 text-white p-4 rounded-lg shadow-md flex flex-col items-center justify-center">
+          <span className="font-semibold">ICP Balance:</span>&nbsp;
+          {!icpBalance
+            ? renderLoadingSpinner(loadingState.icpBalance)
+            : icpBalance}
+        </Card>
+        <Card className="bg-gray-700 text-white p-4 rounded-lg shadow-md flex flex-col items-center justify-center">
+          <span className="font-semibold">Token Balance:</span>&nbsp;
+          {!tokenBalance
+            ? renderLoadingSpinner(loadingState.tokenBalance)
+            : (tokenBalance / 1e8).toFixed(2)}
+        </Card>
+        <Card className="bg-gray-700 text-white p-4 rounded-lg shadow-md flex flex-col items-center justify-center">
+          <span className="font-semibold">Token Sold:</span>&nbsp;
+          {!tokenSold
+            ? renderLoadingSpinner(loadingState.tokenSold)
+            : (tokenSold / 1e8).toFixed(2)}
+        </Card>
+        <Card className="bg-gray-700 text-white p-4 rounded-lg shadow-md flex flex-col items-center justify-center">
+          <span className="font-semibold">ICP Received:</span>&nbsp;
+          {!icpReceived
+            ? renderLoadingSpinner(loadingState.icpReceived)
+            : (icpReceived / 1e8).toFixed(2)}
+        </Card>
+      </div>
+
+      <Table className="mt-6 shadow-lg rounded-lg overflow-hidden">
+        <TableHeader>
+          <TableRow className="text-gray-400 bg-gray-700">
+            <TableHead>Time</TableHead>
+            <TableHead>Principal</TableHead>
+            <TableHead>Amount (ICP)</TableHead>
+            <TableHead>Refcode</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {logs.map((log, index) => {
+            const timeInSeconds = Number((log.time / BigInt(1e6)).toString());
+            const dateFormatted = format(
+              new Date(timeInSeconds),
+              "yyyy-MM-dd HH:mm:ss"
+            );
+            return (
+              <TableRow
+                key={index}
+                className={index % 2 ? "bg-gray-700" : "bg-gray-600"}
+              >
+                <TableCell>{dateFormatted} UTC</TableCell>
+                <TableCell>{log.principal.toText()}</TableCell>
+                <TableCell>{convertE8sToICP(log.icp_amount_e8s)}</TableCell>
+                <TableCell>{log.refcode || "N/A"}</TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
+      <div className="py-8 flex justify-center">
+        <Button
+          onClick={() => downloadCSV(logs)}
+          className="w-[22rem] text-lg bg-indigo-500 hover:bg-indigo-600 py-2 rounded shadow-lg"
+        >
+          Download Logs as CSV
+        </Button>
       </div>
     </div>
   );
