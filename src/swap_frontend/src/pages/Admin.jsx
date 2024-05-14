@@ -43,25 +43,25 @@ function AdminPage({ swapBackendIdlFactory, swapBackendCanisterId }) {
           <span className="font-semibold">Exchange Rate:</span>&nbsp;
           {!exchangeRate
             ? renderLoadingSpinner(loadingState.exchangeRate)
-            : exchangeRate}
+            : exchangeRate} BRD23 = 1 ICP
         </Card>
         <Card className="bg-gray-700 text-white p-4 rounded-lg shadow-md flex flex-col items-center justify-center">
           <span className="font-semibold">ICP Balance:</span>&nbsp;
           {!icpBalance
             ? renderLoadingSpinner(loadingState.icpBalance)
-            : icpBalance}
+            : (icpBalance / 10e8)}
         </Card>
         <Card className="bg-gray-700 text-white p-4 rounded-lg shadow-md flex flex-col items-center justify-center">
           <span className="font-semibold">Token Balance:</span>&nbsp;
           {!tokenBalance
             ? renderLoadingSpinner(loadingState.tokenBalance)
-            : (tokenBalance / 1e8).toFixed(2)}
+            : parseFloat((tokenBalance / 1e8).toFixed(2)).toLocaleString()}
         </Card>
         <Card className="bg-gray-700 text-white p-4 rounded-lg shadow-md flex flex-col items-center justify-center">
-          <span className="font-semibold">Token Sold:</span>&nbsp;
+          <span className="font-semibold">WBRD23 Sold:</span>&nbsp;
           {!tokenSold
             ? renderLoadingSpinner(loadingState.tokenSold)
-            : (tokenSold / 1e8).toFixed(2)}
+            : parseFloat((tokenSold / 1e8).toFixed(2)).toLocaleString()}
         </Card>
         <Card className="bg-gray-700 text-white p-4 rounded-lg shadow-md flex flex-col items-center justify-center">
           <span className="font-semibold">ICP Received:</span>&nbsp;
@@ -71,6 +71,7 @@ function AdminPage({ swapBackendIdlFactory, swapBackendCanisterId }) {
         </Card>
       </div>
 
+      <h2 className="text-xl font-bold">Purchase Log</h2>
       <Table className="mt-6 shadow-lg rounded-lg overflow-hidden">
         <TableHeader>
           <TableRow className="text-gray-400 bg-gray-700">

@@ -17,8 +17,8 @@ function useAdminData(swapBackendIdlFactory) {
     logs: true,
     exchangeRate: true,
     icpBalance: true,
-    tokenBalance: "",
-    tokenSold: "",
+    tokenBalance: true,
+    tokenSold: true,
     icpReceived: true,
   });
 
@@ -57,7 +57,7 @@ function useAdminData(swapBackendIdlFactory) {
     actor
       .getTokenBalance()
       .then((tokenBalance) =>
-        updateData("tokenBalance", tokenBalance.toString())
+        updateData("tokenBalance", parseFloat(tokenBalance.toString()))
       )
       .catch((err) => setError(err.toString()));
     actor
