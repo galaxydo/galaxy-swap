@@ -236,7 +236,7 @@ function App() {
 
   const connectPlugWalletPage = (
     <>
-      <CardHeader className="text-center  space-y-10">
+      <CardHeader className="text-center space-y-10">
         <CardTitle className="">Galaxy Early Investors</CardTitle>
         <CardTitle className="text-lg">
           Dear friend, It's an honor for us to see you as one of the early
@@ -406,7 +406,7 @@ function App() {
                     />
                   ) : null}
                   <div className="flex items-center justify-center min-h-screen">
-                    <Card className="max-w-md w-full bg-text-background shadow-2xl shadow-custom rounded-lg p-4 border-none my-4">
+                  <Card className="max-w-md w-full bg-text-background bg-opacity-85 shadow-2xl shadow-custom rounded-lg p-4 border-none my-4">
                       {isConnected ? (
                         swapCompleted ? (
                           gratitudePage
