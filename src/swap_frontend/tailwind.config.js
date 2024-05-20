@@ -4,9 +4,9 @@ module.exports = {
   content: [
     "./index.html",
     "./src/**/*.{vue,js,ts,jsx,tsx,scss}",
-    './pages/**/*.{js,jsx}',
-    './components/**/*.{js,jsx}',
-    './app/**/*.{js,jsx}',
+    "./pages/**/*.{js,jsx}",
+    "./components/**/*.{js,jsx}",
+    "./app/**/*.{js,jsx}",
   ],
   prefix: "",
   theme: {
@@ -52,6 +52,16 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        button: "#601c87",
+        "button-hover": "#420764",
+        "text-background": "#170123",
+        card: "#170123",
+        buttonhover: "#420764",
+        shadows: "0 4px 6px -1px rgba(23, 1, 35, 0.1), 0 2px 4px -1px rgba(23, 1, 35, 0.06)",
+      },
+      boxShadow: {
+        custom:
+          "0 4px 6px -1px rgba(23, 1, 35, 0.1), 0 2px 4px -1px rgba(23, 1, 35, 0.06)",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -75,4 +85,4 @@ module.exports = {
     },
   },
   plugins: [require("tailwindcss-animate")],
-}
+};

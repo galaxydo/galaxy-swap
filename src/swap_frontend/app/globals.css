@@ -33,6 +33,13 @@
     --ring: 222.2 84% 4.9%;
 
     --radius: 0.5rem;
+    
+    /* Custom colors */
+    --button: #420764
+    --card: #420764;
+    --button-hover: #420764;
+    --text-background: #170123;
+    --shadow-custom: 0 4px 6px -1px rgba(23, 1, 35, 0.1), 0 2px 4px -1px rgba(23, 1, 35, 0.06);
   }
 
   .dark {

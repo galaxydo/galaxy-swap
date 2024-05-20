@@ -18,27 +18,25 @@ function DialogWithVideoConnect() {
     <Dialog>
       <DialogTrigger asChild>
         <Button
-          variant="outline"
-          className="absolute top-0 left-0 m-4 text-lg border-none bg-indigo-500 hover:bg-indigo-600 py-2 px-4 rounded shadow-lg shadow-indigo-600/50"
-        >
+          className="absolute top-0 left-0 m-4 text-lg border-none bg-button bg-button-hover py-2 px-4 rounded shadow-custom"        >
           Add Token Instruction
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-md bg-indigo-900 max-w-md">
+      <DialogContent className="sm:max-w-md bg-card max-w-md">
         <ScrollArea className="max-h-[90vh] overflow-auto">
           <div className="max-h-full">
             <DialogHeader className="mb-2">
-              <DialogTitle>Add WBR23 Token Instructions</DialogTitle>
+              <DialogTitle>Add Galaxy Token Instructions</DialogTitle>
               <DialogDescription>
-                This short video explains how to add WBR23 token to your Plug
+                This short video explains how to add Galaxy token to your Plug
                 wallet
               </DialogDescription>
             </DialogHeader>
             Token Canister ID:
             <div className="flex items-center my-2">
               <div className="grid flex-1 gap-2">
-                <div className="inline-flex items-center border-2 pl-2 bg-indigo-600 rounded">
+                <div className="inline-flex items-center border-2 pl-2 bg-button rounded">
                   <span className=" flex-grow">
                     wexwn-tyaaa-aaaap-ag72a-cai
                   </span>
