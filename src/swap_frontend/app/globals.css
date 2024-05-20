@@ -4,7 +4,12 @@
 
 @layer base {
   :root {
-    --background: rgb(28 28 28);
+    background: url(../public/images/galaxy-background.png) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;    
+
     --foreground: 222.2 84% 4.9%;
 
     --card: 0 0% 100%;
