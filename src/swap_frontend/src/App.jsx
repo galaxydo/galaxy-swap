@@ -274,7 +274,7 @@ function App() {
       <CardHeader className="text-center  space-y-10">
         <CardTitle>Galaxy Early Investors</CardTitle>
         <CardDescription className=" text-lg">
-          Please spe how much ICP do you want to invest. You need to
+          Please specify how much ICP do you want to invest. You need to
           pre-approve ICP spend in order to perform token swap.
         </CardDescription>
       </CardHeader>
@@ -340,7 +340,7 @@ function App() {
             Make sure to add our token to your Plug Wallet.
           </p>
           <h2 className="font-semibold text-lg mt-8">
-            How to add WBR23 Token:
+            How to add WSTAR Token:
           </h2>
           <label className="block mt-2">Token Canister ID:</label>
           <div className="inline-flex items-center border-2 my-2 pl-2 bg-card rounded">
