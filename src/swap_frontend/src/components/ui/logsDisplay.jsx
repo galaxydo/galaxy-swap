@@ -55,7 +55,7 @@ function LogsDisplay({
             <DialogTrigger asChild>
                 <Button
                     variant="outline"
-                    className="absolute top-0 left-0 m-4 text-lg border-none bg-indigo-500 hover:bg-indigo-600 py-2 px-4 rounded shadow-lg shadow-indigo-600/50"
+                    className="absolute top-0 left-0 m-4 text-lg border-none bg-button button-hover py-2 px-4 rounded shadow-lg shadow-indigo-600/50"
                 >
                     Add Token Instruction
                 </Button>

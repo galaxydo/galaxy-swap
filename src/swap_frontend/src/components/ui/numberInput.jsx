@@ -56,7 +56,7 @@ function NumberInput({
     <div className="px-8 text-lg">
       <div className="flex items-center justify-center">
         <button
-          className=" bg-indigo-500 hover:bg-indigo-600 px-7 py-2 rounded-l-full"
+          className=" bg-button buttonhover px-7 py-2 rounded-l-full"
           onClick={handleDecrement}
           disabled={disabled || value <= min}
         >
@@ -65,7 +65,7 @@ function NumberInput({
         <div className="relative flex-grow ">
           <input
             type="number"
-            className="w-full text-center  px-6 py-2 focus:outline-none bg-indigo-500"
+            className="w-full text-center  px-6 py-2 focus:outline-none bg-button"
             value={value}
             onChange={handleChange}
             onBlur={handleBlur}
@@ -77,7 +77,7 @@ function NumberInput({
           </span>
         </div>
         <button
-          className=" bg-indigo-500 hover:bg-indigo-600 px-7 py-2 rounded-r-full"
+          className=" bg-button buttonhover px-7 py-2 rounded-r-full"
           onClick={handleIncrement}
           disabled={disabled || value >= max}
         >

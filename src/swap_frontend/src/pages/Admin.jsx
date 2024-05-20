@@ -105,7 +105,7 @@ function AdminPage({ swapBackendIdlFactory, swapBackendCanisterId }) {
       <div className="py-8 flex justify-center">
         <Button
           onClick={() => downloadCSV(logs)}
-          className="w-[22rem] text-lg bg-indigo-500 hover:bg-indigo-600 py-2 rounded shadow-lg"
+          className="w-[22rem] text-lg bg-button bg-button-hover py-2 rounded shadow-lg"
         >
           Download Logs as CSV
         </Button>

@@ -250,7 +250,7 @@ function App() {
       <CardFooter className="text-center">
         <Button
           onClick={connectPlugWallet}
-          className=" text-lg bg-indigo-500 hover:bg-indigo-600 w-full py-2 rounded shadow-lg"
+          className=" text-lg bg-button bg-button-hover w-full py-2 rounded shadow-lg"
         >
           Connect Plug Wallet
         </Button>
@@ -274,7 +274,7 @@ function App() {
       <CardHeader className="text-center  space-y-10">
         <CardTitle>Galaxy Early Investors</CardTitle>
         <CardDescription className=" text-lg">
-          Please speicfy how much ICP do you want to invest. You need to
+          Please spe how much ICP do you want to invest. You need to
           pre-approve ICP spend in order to perform token swap.
         </CardDescription>
       </CardHeader>
@@ -293,7 +293,7 @@ function App() {
       <CardFooter className="flex justify-center items-center">
         <Button
           onClick={approveSpend}
-          className="w-[22rem] text-lg bg-indigo-500 hover:bg-indigo-600 py-2 rounded shadow-lg"
+          className="w-[22rem] text-lg bg-button bg-button-hover py-2 rounded shadow-lg"
           disabled={spendAmount < 10 || spendAmount > 250 || loading}
         >
           {loading && <Spinner />}
@@ -312,7 +312,7 @@ function App() {
         </div>
         <CardTitle className="">Galaxy Early Investors</CardTitle>
       </CardHeader>
-      <div className="w-[22rem] text-center mx-auto shadow-lg bg-indigo-400 font-bold text-xl mb-6 rounded py-2">
+      <div className="w-[22rem] text-center mx-auto shadow-lg bg-button font-bold text-xl mb-6 rounded py-2">
         To Invest: {spendAmount} ICP
       </div>
       <ExchangeRate
@@ -324,7 +324,7 @@ function App() {
         <Button
           onClick={performSwap}
           disabled={loading}
-          className="w-[22rem] text-lg bg-indigo-500 hover:bg-indigo-600 py-2 rounded shadow-lg"
+          className="w-[22rem] text-lg bg-button bg-button-hover py-2 rounded shadow-lg"
         >
           {loading && <Spinner />}
           {loading && <span className="mr-2"></span>}
@@ -343,7 +343,7 @@ function App() {
             How to add WBR23 Token:
           </h2>
           <label className="block mt-2">Token Canister ID:</label>
-          <div className="inline-flex items-center border-2 my-2 pl-2 bg-indigo-600 rounded">
+          <div className="inline-flex items-center border-2 my-2 pl-2 bg-card rounded">
             <span className=" flex-grow">wexwn-tyaaa-aaaap-ag72a-cai</span>
             <CopyToClipboardButton textToCopy="wexwn-tyaaa-aaaap-ag72a-cai" />
           </div>
@@ -406,7 +406,7 @@ function App() {
                     />
                   ) : null}
                   <div className="flex items-center justify-center min-h-screen">
-                    <Card className="max-w-md w-full bg-indigo-900 shadow-2xl shadow-indigo-600/50 rounded-lg p-4 border-none my-4">
+                    <Card className="max-w-md w-full bg-text-background shadow-2xl shadow-custom rounded-lg p-4 border-none my-4">
                       {isConnected ? (
                         swapCompleted ? (
                           gratitudePage
