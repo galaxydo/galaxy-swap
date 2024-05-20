@@ -110,7 +110,7 @@ Enter a value for LedgerArg : variant { Upgrade : opt UpgradeArgs; Init : InitAr
       ✔ Enter a principal · tlw7j-oxodg-we7y7-kud7l-kwuvl-bpc3q-parcz-dnt2h-7wemc-on4ij-rae
   ✔ Enter optional field max_memo_length : opt nat16? · no
   Enter field token_name : text
-    ✔ Enter a text (type :e to use editor) · Bridge23
+    ✔ Enter a text (type :e to use editor) · Galaxy
   ✔ Enter optional field feature_flags : opt FeatureFlags? · no
 Sending the following argument:
 (
@@ -139,7 +139,7 @@ Sending the following argument:
         controller_id = principal "tlw7j-oxodg-we7y7-kud7l-kwuvl-bpc3q-parcz-dnt2h-7wemc-on4ij-rae";
       };
       max_memo_length = null;
-      token_name = "Bridge23";
+      token_name = "Galaxy";
       feature_flags = null;
     }
   },

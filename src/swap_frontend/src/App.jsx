@@ -55,7 +55,7 @@ function App() {
   const [swapCompleted, setSwapCompleted] = useState(false);
   // const isMobile = PlugMobileProvider.isMobileBrowser();
   const [isDesktop, setIsDesktop] = useState(window.innerWidth > 768);
-  const [inviteCode, setInviteCode] = useState("BRIDGE");
+  const [inviteCode, setInviteCode] = useState("GALAXY");
   const { toast } = useToast();
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -237,14 +237,14 @@ function App() {
   const connectPlugWalletPage = (
     <>
       <CardHeader className="text-center  space-y-10">
-        <CardTitle className="">Bridge23 Early Investors</CardTitle>
+        <CardTitle className="">Galaxy Early Investors</CardTitle>
         <CardTitle className="text-lg">
           Dear friend, It's an honor for us to see you as one of the early
           investors.
         </CardTitle>
         <CardDescription className="">
           Your investment is the seed that grows tomorrow's innovations. Thank
-          you for being the early champions of change with Bridge23.
+          you for being the early champions of change with Galaxy.
         </CardDescription>
       </CardHeader>
       <CardFooter className="text-center">
@@ -272,7 +272,7 @@ function App() {
   const approveSpendPage = (
     <>
       <CardHeader className="text-center  space-y-10">
-        <CardTitle>Bridge23 Early Investors</CardTitle>
+        <CardTitle>Galaxy Early Investors</CardTitle>
         <CardDescription className=" text-lg">
           Please speicfy how much ICP do you want to invest. You need to
           pre-approve ICP spend in order to perform token swap.
@@ -310,7 +310,7 @@ function App() {
         <div className="absolute left-0 top-0 mr-2 text-sm ">
           {!loading && <button onClick={handleGoBack}>&#8592; Go Back</button>}
         </div>
-        <CardTitle className="">Bridge23 Early Investors</CardTitle>
+        <CardTitle className="">Galaxy Early Investors</CardTitle>
       </CardHeader>
       <div className="w-[22rem] text-center mx-auto shadow-lg bg-indigo-400 font-bold text-xl mb-6 rounded py-2">
         To Invest: {spendAmount} ICP
@@ -363,7 +363,7 @@ function App() {
         <CardTitle className="">Dear Investors!</CardTitle>
       </CardHeader>
       <CardDescription className=" text-lg mb-8">
-        On behalf of the entire Bridge23 team, we extend our deepest gratitude
+        On behalf of the entire Galaxy team, we extend our deepest gratitude
         for your early support in acquiring our tokens. Your confidence and
         commitment in our product are invaluable to us. Your investment not only
         fuels our progress but also strengthens our resolve to deliver a product
@@ -374,8 +374,8 @@ function App() {
         Warm regards
         <br />
         <br />
-        The Bridge23 Team{" "}
-        <img src="/favicon.png" alt="Bridge23 Logo" className="w-8 inline" />
+        The Galaxy Team{" "}
+        <img src="/favicon.png" alt="Galaxy Logo" className="w-8 inline" />
       </CardDescription>
     </>
   );

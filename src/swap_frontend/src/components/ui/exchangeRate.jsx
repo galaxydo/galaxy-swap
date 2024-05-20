@@ -38,7 +38,7 @@ function ExchangeRate({
         Exchange Rate: 1 ICP = {exchangeRate}&nbsp;
         <img
           src="/favicon.png"
-          alt="Bridge23 Logo"
+          alt="Galaxy Logo"
           className="w-6 inline pb-1"
         />
       </div>
@@ -46,7 +46,7 @@ function ExchangeRate({
         You will get: {exchangeRate * icpAmount}&nbsp;
         <img
           src="/favicon.png"
-          alt="Bridge23 Logo"
+          alt="Galaxy Logo"
           className="w-6 inline pb-1"
         />
       </div>
