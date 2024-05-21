@@ -37,7 +37,7 @@ function ExchangeRate({
       <div className=" text-center text-lg mb-2">
         Exchange Rate: 1 ICP = {exchangeRate}&nbsp;
         <img
-          src="/favicon.png"
+          src="/token.png"
           alt="Galaxy Logo"
           className="w-6 inline pb-1"
         />
@@ -45,7 +45,7 @@ function ExchangeRate({
       <div className=" text-center text-lg mb-4">
         You will get: {exchangeRate * icpAmount}&nbsp;
         <img
-          src="/favicon.png"
+          src="/token.png"
           alt="Galaxy Logo"
           className="w-6 inline pb-1"
         />
