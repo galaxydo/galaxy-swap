@@ -274,9 +274,9 @@ function App() {
   const approveSpendPage = (
     <>
       <CardHeader className="text-center  space-y-10">
-      <CardTitle className="text-2xl">Galaxy Early Investors</CardTitle>
+        <CardTitle className="text-2xl">Galaxy Early Investors</CardTitle>
         <CardDescription className=" text-lg">
-          Please spent how much ICP do you want to invest. You need to
+          Please specify how much ICP do you want to invest. You need to
           pre-approve ICP spend in order to perform token swap.
         </CardDescription>
       </CardHeader>
@@ -408,7 +408,7 @@ function App() {
                     />
                   ) : null}
                   <div className="flex items-center justify-center min-h-screen">
-                  <Card className="max-w-md w-full bg-text-background bg-opacity-85 shadow-2xl shadow-custom rounded-lg p-4 border-none my-4">
+                    <Card className="max-w-md w-full bg-text-background bg-opacity-85 shadow-2xl shadow-custom rounded-lg p-4 border-none my-4">
                       {isConnected ? (
                         swapCompleted ? (
                           gratitudePage
