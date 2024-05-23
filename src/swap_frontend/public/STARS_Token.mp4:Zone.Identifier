@@ -1,0 +1,4 @@
+[ZoneTransfer]
+ZoneId=3
+ReferrerUrl=https://cloudconvert.com/
+HostUrl=https://eu-central.storage.cloudconvert.com/tasks/66d6a16b-5732-43d4-8a0f-7732f6330bbb/STARS_Token.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=cloudconvert-production%2F20240523%2Ffra%2Fs3%2Faws4_request&X-Amz-Date=20240523T111055Z&X-Amz-Expires=86400&X-Amz-Signature=ffc888339d5bf9c7acbd12503da557514aab99137b8c6e781226474457579de6&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3D%22STARS_Token.mp4%22&response-content-type=video%2Fmp4&x-id=GetObject
