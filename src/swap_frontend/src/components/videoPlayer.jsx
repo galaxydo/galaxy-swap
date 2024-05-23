@@ -14,7 +14,7 @@ function VideoPlayer() {
   return (
     <div>
       <video ref={videoRef} className="w-full my-4 rounded">
-        <source src="/B23_Token.mp4" type="video/mp4" />
+        <source src="/STARS_Token.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
     </div>

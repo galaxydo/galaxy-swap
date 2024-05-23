@@ -38,9 +38,9 @@ function DialogWithVideoConnect() {
               <div className="grid flex-1 gap-2">
                 <div className="inline-flex items-center border-2 pl-2 bg-button rounded">
                   <span className=" flex-grow">
-                    wexwn-tyaaa-aaaap-ag72a-cai
+                    mlv74-pyaaa-aaaam-acoua-cai
                   </span>
-                  <CopyToClipboardButton textToCopy="wexwn-tyaaa-aaaap-ag72a-cai" />
+                  <CopyToClipboardButton textToCopy="mlv74-pyaaa-aaaam-acoua-cai" />
                 </div>
               </div>
             </div>

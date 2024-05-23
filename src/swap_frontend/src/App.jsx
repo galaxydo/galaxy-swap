@@ -245,6 +245,8 @@ function App() {
         <CardDescription className="">
           Your investment is the seed that grows tomorrow's innovations. Thank
           you for being the early champions of change with Galaxy.
+          <br />
+          Be sure to read terms and conditions <a href="https://caligian.notion.site/Galaxy-do-Early-Investors-3e76576a4d254783a5e57f0a39cc8572?pvs=4" className="text-blue-500 underline">here</a>.
         </CardDescription>
       </CardHeader>
       <CardFooter className="text-center">
@@ -272,7 +274,7 @@ function App() {
   const approveSpendPage = (
     <>
       <CardHeader className="text-center  space-y-10">
-        <CardTitle>Galaxy Early Investors</CardTitle>
+        <CardTitle className="text-2xl">Galaxy Early Investors</CardTitle>
         <CardDescription className=" text-lg">
           Please specify how much ICP do you want to invest. You need to
           pre-approve ICP spend in order to perform token swap.
@@ -406,7 +408,7 @@ function App() {
                     />
                   ) : null}
                   <div className="flex items-center justify-center min-h-screen">
-                  <Card className="max-w-md w-full bg-text-background bg-opacity-85 shadow-2xl shadow-custom rounded-lg p-4 border-none my-4">
+                    <Card className="max-w-md w-full bg-text-background bg-opacity-85 shadow-2xl shadow-custom rounded-lg p-4 border-none my-4">
                       {isConnected ? (
                         swapCompleted ? (
                           gratitudePage
